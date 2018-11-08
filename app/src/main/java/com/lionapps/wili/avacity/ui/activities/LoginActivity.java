@@ -20,10 +20,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.lionapps.wili.avacity.R;
+import com.lionapps.wili.avacity.viewmodel.LoginViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -44,6 +46,8 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
 
+    public LoginViewModel loginViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
+
+        loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
 
         loginWithGoogleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential: success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            loginViewModel.insertUser(user);
                         } else {
                             Log.w(TAG,"signInWithCredential:failure", task.getException());
                             updateUI(null);
