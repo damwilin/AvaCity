@@ -90,6 +90,12 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    private void startMainActivity(){
+        mGoogleSignInClient.signOut();
+        Intent mainActivityIntent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(mainActivityIntent);
+    }
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount account){
         Log.d(TAG,"firebaseAuthWithGoogle: " + account.getId());
 
@@ -103,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                             loginViewModel.insertUser(user);
+                            startMainActivity();
                         } else {
                             Log.w(TAG,"signInWithCredential:failure", task.getException());
                             updateUI(null);
