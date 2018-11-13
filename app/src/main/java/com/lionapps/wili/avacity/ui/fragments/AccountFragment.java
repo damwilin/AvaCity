@@ -27,10 +27,6 @@ public class AccountFragment extends Fragment {
 
     private MainViewModel viewModel;
 
-    public static AccountFragment newInstance() {
-        return new AccountFragment();
-    }
-
     @BindView(R.id.account_image_view)
     ImageView accountImageView;
     @BindView(R.id.account_name_text_view)

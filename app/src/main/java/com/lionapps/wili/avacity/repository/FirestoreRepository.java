@@ -20,31 +20,6 @@ public class FirestoreRepository implements Repository {
         this.firestore = FirebaseFirestore.getInstance();
     }
 
-    /*
-    public void insertUser(FirebaseUser mUser){
-        final Map<String, Object> user= new HashMap<>();
-        user.put("name", mUser.getDisplayName());
-        user.put("id", mUser.getUid());
-        user.put("email", mUser.getEmail());
-
-        db.collection("users")
-                .document(mUser.getEmail())
-                .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG,"User added");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG,"User adding error" + e);
-                    }
-                });
-    }
-*/
-
     @Override
     public UserLiveData getUserLiveData(String userId) {
         DocumentReference ref = FirestoreUtils.getUserReference(firestore, userId);
