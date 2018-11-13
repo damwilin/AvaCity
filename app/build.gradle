@@ -57,6 +57,9 @@ dependencies {
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //SlidingUpPanel
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

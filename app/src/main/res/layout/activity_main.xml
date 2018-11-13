@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sliding_up_panel"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="bottom"
+    app:umanoPanelHeight="68dp"
+    app:umanoShadowHeight="4dp"
     tools:context=".ui.activities.MainActivity">
-<FrameLayout
-    android:id="@+id/account_container"
-    android:layout_width="match_parent"
-    android:layout_height="80dp"></FrameLayout>
-    <TextView
-        android:layout_below="@id/account_container"
-        android:id="@+id/user_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="userId"/>
-    <Button
-        android:id="@+id/logout_main"
-        android:layout_below="@id/account_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="logout"/>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:gravity="top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/account_container"
+            android:layout_width="match_parent"
+            android:layout_height="120dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|top"
+            android:text="The awesome Sliding up panel!"
+            android:textSize="24sp" />
+
+    </RelativeLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
