@@ -8,23 +8,36 @@ public class User {
     private String emailAdress;
     private String photoUrl;
     private int countOfPlace;
+    private int rank;
 
-    public User(String name, String userId, String emailAdress, String photoUrl, int countOfPlace) {
+    public User() {
+    }
+
+    public User(String name, String userId, String emailAdress, String photoUrl, int countOfPlace, int rank) {
         this.name = name;
         this.userId = userId;
         this.emailAdress = emailAdress;
         this.photoUrl = photoUrl;
         this.countOfPlace = countOfPlace;
+        this.rank = rank;
     }
 
-    public User createFrom(FirebaseUser firebaseUser) {
+    public User (FirebaseUser firebaseUser) {
         this.name = firebaseUser.getDisplayName();
         this.userId = firebaseUser.getUid();
         this.emailAdress = firebaseUser.getEmail();
         if (firebaseUser.getPhotoUrl() != null)
             this.photoUrl = firebaseUser.getPhotoUrl().toString();
         this.countOfPlace = 0;
-        return this;
+        this.rank = 0;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
     public String getName() {

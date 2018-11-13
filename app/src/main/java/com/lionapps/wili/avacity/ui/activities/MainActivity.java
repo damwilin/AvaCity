@@ -1,65 +1,57 @@
 package com.lionapps.wili.avacity.ui.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.lionapps.wili.avacity.R;
+import com.lionapps.wili.avacity.models.User;
+import com.lionapps.wili.avacity.repository.FirestoreRepository;
+import com.lionapps.wili.avacity.repository.Repository;
 import com.lionapps.wili.avacity.ui.fragments.AccountFragment;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
+import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 private FragmentManager fragmentManager;
 private AccountFragment accountFragment;
 
-public MainViewModel mainViewModel;
+public MainViewModel viewModel;
+private Repository repository;
 
-//TO DELETE
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
-    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        initializeFragment();
-        displayAccount();
-
-        //TO DELETE
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        //mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        final TextView userTextView = findViewById(R.id.user_text_view);
-        userTextView.setText(user.getEmail());
-        Button logoutButton = findViewById(R.id.logout_main);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
+        repository = new FirestoreRepository();
+        ViewModelFactory factory = new ViewModelFactory(repository);
+        viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
+        /*
+        LiveData liveData = viewModel.getUserLiveData(userId);
+        liveData.observe(this, new Observer<User>() {
             @Override
-            public void onClick(View v) {
-                //mGoogleSignInClient.signOut();
-                mAuth.signOut();
-                userTextView.setText(user.getEmail());
+            public void onChanged(User user) {
+                if (user != null){
+                    //Populate data
+                }
             }
         });
+        */
+        initializeFragment();
+        displayAccount();
     }
 
     private void initializeFragment() {

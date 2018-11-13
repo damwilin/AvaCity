@@ -1,13 +1,20 @@
 package com.lionapps.wili.avacity.viewmodel;
 
-import android.app.Application;
+import com.lionapps.wili.avacity.repository.Repository;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 
-public class MainViewModel extends AndroidViewModel {
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
-    public MainViewModel(@NonNull Application application) {
-        super(application);
+public class MainViewModel extends ViewModel {
+
+    private Repository repository;
+
+    public MainViewModel(Repository repository) {
+        this.repository = repository;
+    }
+
+    public LiveData getUserLiveData(String userId) {
+        return repository.getUserLiveData(userId);
     }
 }

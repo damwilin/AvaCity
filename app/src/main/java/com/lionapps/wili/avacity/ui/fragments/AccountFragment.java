@@ -1,5 +1,6 @@
 package com.lionapps.wili.avacity.ui.fragments;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
@@ -16,12 +17,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.lionapps.wili.avacity.R;
-import com.lionapps.wili.avacity.viewmodel.AccountViewModel;
+import com.lionapps.wili.avacity.models.User;
+import com.lionapps.wili.avacity.viewmodel.MainViewModel;
+import com.squareup.picasso.Picasso;
 
 public class AccountFragment extends Fragment {
 
-    private AccountViewModel mViewModel;
+    private MainViewModel viewModel;
 
     public static AccountFragment newInstance() {
         return new AccountFragment();
@@ -51,8 +55,19 @@ public class AccountFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         // TODO: Use the ViewModel
+        viewModel.getUserLiveData(FirebaseAuth.getInstance().getCurrentUser().getUid()).observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                accountNameTextView.setText(user.getName());
+                accountRankTextView.setText(String.valueOf(user.getRank()));
+                placesNumberTextView.setText(String.valueOf(user.getCountOfPlace()));
+                Picasso.get()
+                        .load(user.getPhotoUrl())
+                        .into(accountImageView);
+            }
+        });
     }
 
 }
