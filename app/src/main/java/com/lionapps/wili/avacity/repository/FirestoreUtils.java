@@ -27,7 +27,7 @@ public class FirestoreUtils {
         return firestore.collection(PLACES);
     }
 
-    public static DocumentReference getPlacesReference(FirebaseFirestore firestore, String placeId){
+    public static DocumentReference getPlaceReference(FirebaseFirestore firestore, String placeId){
         return firestore.collection(PLACES).document(placeId);
     }
 

@@ -1,12 +1,14 @@
 package com.lionapps.wili.avacity.repository;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.model.Document;
+import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
 import com.lionapps.wili.avacity.models.User;
 
@@ -29,5 +31,11 @@ public class FirestoreRepository implements Repository {
     @Override
     public void insertUser(User user) {
         FirestoreUtils.insertUser(firestore,user);
+    }
+
+    @Override
+    public PlaceListLiveData getPlacesLiveData() {
+        CollectionReference ref = FirestoreUtils.getPlacesReference(firestore);
+        return new PlaceListLiveData(ref);
     }
 }
