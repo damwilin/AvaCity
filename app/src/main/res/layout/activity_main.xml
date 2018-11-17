@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sliding_up_panel"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinator"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".ui.activities.MainActivity">
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    android:id="@+id/sliding_up_panel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:gravity="bottom"
     app:umanoPanelHeight="68dp"
-    app:umanoShadowHeight="4dp"
-    tools:context=".ui.activities.MainActivity">
-
+    app:umanoShadowHeight="4dp">
     <RelativeLayout
         android:gravity="top"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <FrameLayout
+            android:id="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <FrameLayout
+            android:layout_marginTop="100dp"
             android:id="@+id/account_container"
             android:layout_width="match_parent"
             android:layout_height="120dp" />
+
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -34,3 +45,4 @@
     </RelativeLayout>
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

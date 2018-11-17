@@ -11,9 +11,13 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            resValue 'string', "GoogleMaps_ApiKey", AvaCity_GoogleMaps_ApiKey
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue 'string', "GoogleMaps_ApiKey", AvaCity_GoogleMaps_ApiKey
         }
     }
     dataBinding {
@@ -60,6 +64,12 @@ dependencies {
 
     //SlidingUpPanel
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
+    //Google Maps
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+
+    //EasyPermissions
+    implementation 'pub.devrel:easypermissions:2.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
