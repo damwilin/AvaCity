@@ -39,12 +39,10 @@
             android:layout_width="match_parent"
             android:layout_height="300dp">
 
-            <TextView
+            <FrameLayout
+                android:id="@+id/sliding_panel_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center|top"
-                android:text="The awesome Sliding up panel!"
-                android:textSize="24sp" />
+                android:layout_height="match_parent"/>
 
         </RelativeLayout>
 

@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.model.Document;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
+import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
 
 import javax.annotation.Nullable;
@@ -37,5 +38,10 @@ public class FirestoreRepository implements Repository {
     public PlaceListLiveData getPlacesLiveData() {
         CollectionReference ref = FirestoreUtils.getPlacesReference(firestore);
         return new PlaceListLiveData(ref);
+    }
+
+    @Override
+    public void insertPlace(Place place) {
+        FirestoreUtils.insertPlace(firestore, place);
     }
 }

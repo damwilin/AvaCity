@@ -12,4 +12,5 @@ public interface Repository {
     void insertUser(User user);
 
     PlaceListLiveData getPlacesLiveData();
+    void insertPlace(Place place);
 }

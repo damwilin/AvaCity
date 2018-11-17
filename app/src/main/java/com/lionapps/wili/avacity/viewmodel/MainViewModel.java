@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.location.LocationManager;
 
+import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.repository.Repository;
 
 
@@ -27,4 +28,7 @@ public class MainViewModel extends ViewModel {
         return repository.getPlacesLiveData();
     }
 
+    public void insertPlace(Place place){
+        repository.insertPlace(place);
+    }
 }

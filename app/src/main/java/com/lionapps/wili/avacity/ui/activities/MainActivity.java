@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -13,7 +12,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.lionapps.wili.avacity.R;
-import com.lionapps.wili.avacity.Utils.MapUtils;
+import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
+import com.lionapps.wili.avacity.utils.MapUtils;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.repository.FirestoreRepository;
 import com.lionapps.wili.avacity.repository.Repository;
@@ -36,6 +36,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private FragmentManager fragmentManager;
     private AccountFragment accountFragment;
+    private AddPlaceFragment addPlaceFragment;
     private SupportMapFragment mapFragment;
 
 
@@ -59,18 +60,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         //slidingUpPanelLayout.setAnchorPoint(100);
         initializeFragments();
-        displayAccount();
+        displayAccountFragment();
+        displayAddPlaceFragment();
         displayMap();
     }
 
     private void initializeFragments() {
         accountFragment = new AccountFragment();
+        addPlaceFragment = new AddPlaceFragment();
         fragmentManager = getSupportFragmentManager();
         mapFragment = (SupportMapFragment)fragmentManager
                 .findFragmentById(R.id.map);
     }
 
-    private void displayAccount() {
+    private void displayAccountFragment() {
         fragmentManager.beginTransaction()
                 .add(R.id.account_container, accountFragment)
                 .commit();
@@ -78,6 +81,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void displayMap() {
         mapFragment.getMapAsync(this);
+    }
+
+    private void displayAddPlaceFragment(){
+        fragmentManager.beginTransaction()
+                .add(R.id.sliding_panel_container, addPlaceFragment)
+                .commit();
     }
 
     private void setLocationEnabled() {

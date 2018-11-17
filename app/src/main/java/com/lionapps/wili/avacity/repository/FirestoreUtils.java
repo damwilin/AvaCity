@@ -6,6 +6,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
 
 import javax.annotation.Nullable;
@@ -40,6 +41,11 @@ public class FirestoreUtils {
                     ref.set(user);
             }
         });
+    }
+
+    public static void insertPlace(FirebaseFirestore firestore, Place place){
+        CollectionReference ref = FirestoreUtils.getPlacesReference(firestore);
+        ref.add(place);
     }
 
     public static User getUser(){
