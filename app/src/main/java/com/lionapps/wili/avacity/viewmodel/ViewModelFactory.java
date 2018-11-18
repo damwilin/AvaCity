@@ -1,6 +1,5 @@
 package com.lionapps.wili.avacity.viewmodel;
 
-import com.lionapps.wili.avacity.repository.FirestoreRepository;
 import com.lionapps.wili.avacity.repository.Repository;
 
 import androidx.annotation.NonNull;

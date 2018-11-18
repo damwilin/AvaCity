@@ -4,23 +4,27 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.snackbar.Snackbar;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
+import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
 import com.lionapps.wili.avacity.utils.MapUtils;
 import com.lionapps.wili.avacity.models.Place;
-import com.lionapps.wili.avacity.repository.FirestoreRepository;
+import com.lionapps.wili.avacity.repository.FirebaseRepository;
 import com.lionapps.wili.avacity.repository.Repository;
 import com.lionapps.wili.avacity.ui.fragments.AccountFragment;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,41 +37,43 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener {
     private FragmentManager fragmentManager;
     private AccountFragment accountFragment;
     private AddPlaceFragment addPlaceFragment;
     private SupportMapFragment mapFragment;
+    private PlaceDetailsFragment placeDetailsFragment;
 
 
     public MainViewModel viewModel;
     private Repository repository;
     private GoogleMap map;
+    private Circle clickedCircle;
 
     private final static int REQUEST_LOCATION_PERMISSION = 1001;
 
 
     @BindView(R.id.coordinator)
     CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.sliding_up_panel)
+    SlidingUpPanelLayout slidingUpPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        repository = new FirestoreRepository();
+        repository = new FirebaseRepository();
         ViewModelFactory factory = new ViewModelFactory(repository);
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
-        //slidingUpPanelLayout.setAnchorPoint(100);
         initializeFragments();
         displayAccountFragment();
-        displayAddPlaceFragment();
         displayMap();
     }
-
     private void initializeFragments() {
         accountFragment = new AccountFragment();
         addPlaceFragment = new AddPlaceFragment();
+        placeDetailsFragment = new PlaceDetailsFragment();
         fragmentManager = getSupportFragmentManager();
         mapFragment = (SupportMapFragment)fragmentManager
                 .findFragmentById(R.id.map);
@@ -79,14 +85,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .commit();
     }
 
+    private void displayPlaceDetailsFragment(){
+        fragmentManager.getFragments().clear();
+        fragmentManager.beginTransaction()
+                .replace(R.id.sliding_panel_container, placeDetailsFragment)
+                .commit();
+    }
+
     private void displayMap() {
         mapFragment.getMapAsync(this);
     }
 
+    private void setOnMarkerClickListener(){
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                String tag = marker.getTag().toString();
+                viewModel.setMarkerTag(tag);
+                displayPlaceDetailsFragment();
+                expandSlidingPanel();
+                return true;
+            }
+        });
+    }
+
+    private void setOnMapLongClickListener(){
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                viewModel.setClickedLatLng(latLng);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                displayAddPlaceFragment();
+                expandSlidingPanel();
+            }
+        });
+    }
+
     private void displayAddPlaceFragment(){
+        fragmentManager.getFragments().clear();
         fragmentManager.beginTransaction()
-                .add(R.id.sliding_panel_container, addPlaceFragment)
+                .replace(R.id.sliding_panel_container, addPlaceFragment)
                 .commit();
+        addPlaceFragment.setmCallback(this);
     }
 
     private void setLocationEnabled() {
@@ -102,10 +142,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         setLocationEnabled();
-        map.addMarker(new MarkerOptions()
-        .position(new LatLng(53.01,18.60))
-        .title("Title")
-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        displayMarkers();
+        setOnMapLongClickListener();
+        setOnMarkerClickListener();
     }
 
     private void displayMarkers(){
@@ -113,12 +152,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onChanged(List<Place> places) {
                 for (Place currPlace : places){
-                    map.addMarker(MapUtils.createMarkerFromPlace(currPlace));
+                    Marker currMarker;
+                    currMarker = map.addMarker(MapUtils.createMarkerFromPlace(currPlace));
+                    currMarker.setTag(currPlace.getPlaceId());
+                    //viewModel.addMarkerToList(currMarker);
                 }
             }
         });
     }
 
+    private void expandSlidingPanel(){
+        slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+    }
 
 
+    @Override
+    public void onUploadClick() {
+        slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+    }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinator"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,38 +10,35 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/login_with_google_button"
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
+        <TextView
+            android:layout_above="@id/login_with_google_button"
+            android:layout_marginBottom="100dp"
+            android:textSize="48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:text="AvaCity"/>
+
+        <com.google.android.material.button.MaterialButton
+            app:cornerRadius="48dp"
+            android:layout_above="@id/logout_button"
+            android:id="@+id/login_with_google_button"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:text="LOGIN WITH Google" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
+            app:cornerRadius="48dp"
+            android:layout_marginBottom="100dp"
+            android:layout_alignParentBottom="true"
             android:id="@+id/logout_button"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_with_google_button"
             android:layout_centerHorizontal="true"
-            android:text="logout" />
+            android:text="Sign out" />
 
-        <TextView
-            android:id="@+id/status_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/logout_button"
-            android:layout_centerHorizontal="true"
-            android:text="status textView" />
-
-        <Button
-            android:id="@+id/main_activity_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/status_text_view"
-            android:layout_centerHorizontal="true"
-            android:text="MainActivity" />
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
