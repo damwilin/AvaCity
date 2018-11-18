@@ -3,6 +3,7 @@ package com.lionapps.wili.avacity.ui.activities;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,6 +12,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.material.bottomnavigation.BottomNavigationMenu;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
@@ -28,6 +31,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
@@ -49,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public MainViewModel viewModel;
     private Repository repository;
     private GoogleMap map;
-    private Circle clickedCircle;
 
     private final static int REQUEST_LOCATION_PERMISSION = 1001;
 
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.sliding_up_panel)
     SlidingUpPanelLayout slidingUpPanel;
+    @BindView(R.id.bottom_navigation_menu)
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +171,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void expandSlidingPanel(){
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+    }
+
+    private void setupBottomNavigationView(){
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.map_view:
+                        //TODO switch mapFragment
+                    case R.id.account_view:
+                        //TODO switch accountDetailsView
+                }
+                return true;
+            }
+        });
     }
 
 
