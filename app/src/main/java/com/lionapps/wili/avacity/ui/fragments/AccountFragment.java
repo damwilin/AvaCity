@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,17 +29,13 @@ public class AccountFragment extends Fragment {
     private MainViewModel viewModel;
 
     @BindView(R.id.account_image_view)
-    ImageView accountImageView;
+    CircleImageView accountImageView;
     @BindView(R.id.account_name_text_view)
     TextView accountNameTextView;
     @BindView(R.id.account_rank_text_view)
     TextView accountRankTextView;
-    @BindView(R.id.gps_image_view)
-    ImageView gpsImageView;
     @BindView(R.id.places_number_text_view)
     TextView placesNumberTextView;
-    @BindView(R.id.settings_image_view)
-    ImageView settingsImageView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,

@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.snackbar.Snackbar;
+import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
 import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StatusBarUtil.setTranslucent(this,50);
         ButterKnife.bind(this);
         repository = new FirebaseRepository();
         ViewModelFactory factory = new ViewModelFactory(repository);

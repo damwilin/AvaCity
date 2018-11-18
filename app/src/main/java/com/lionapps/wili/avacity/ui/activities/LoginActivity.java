@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        StatusBarUtil.setTranslucent(this,10);
+        StatusBarUtil.setTranslucent(this,50);
         ButterKnife.bind(this);
         viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
         setLoginWithGoogleButton();

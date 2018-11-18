@@ -66,6 +66,8 @@ dependencies {
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     //StatusBarUtil
     implementation 'com.jaeger.statusbarutil:library:1.5.1'
+    //CircleImageView
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 
 }
 
