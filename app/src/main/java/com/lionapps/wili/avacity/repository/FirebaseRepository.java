@@ -15,11 +15,18 @@ import com.lionapps.wili.avacity.models.User;
 public class FirebaseRepository implements Repository {
     private FirebaseFirestore firestore;
     private FirebaseStorage storage;
+    private static FirebaseRepository instance= null;
 
 
-    public FirebaseRepository() {
+    private FirebaseRepository() {
         this.firestore = FirebaseFirestore.getInstance();
         this.storage = FirebaseStorage.getInstance();
+    }
+    public static FirebaseRepository getInstance(){
+        if(instance == null)
+            return new FirebaseRepository();
+        else
+            return instance;
     }
 
     @Override

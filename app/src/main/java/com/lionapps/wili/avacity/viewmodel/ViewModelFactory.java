@@ -1,5 +1,6 @@
 package com.lionapps.wili.avacity.viewmodel;
 
+import com.lionapps.wili.avacity.repository.FirebaseRepository;
 import com.lionapps.wili.avacity.repository.Repository;
 
 import androidx.annotation.NonNull;
@@ -10,8 +11,8 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
 
     private final Repository repository;
 
-    public ViewModelFactory(Repository repository) {
-        this.repository = repository;
+    public ViewModelFactory() {
+        this.repository = FirebaseRepository.getInstance();
     }
 
 
@@ -20,7 +21,11 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(MainViewModel.class))
             return (T) new  MainViewModel(repository);
-        else
+        else if (modelClass.isAssignableFrom(LoginViewModel.class)){
+            return (T) new LoginViewModel(repository);
+        }
+        else if (modelClass.isAssignableFrom(MapViewModel.class))
+            return (T) new MapViewModel(repository);
             throw new IllegalArgumentException("ViewModel Not Found");
     }
 }

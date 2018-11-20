@@ -29,6 +29,7 @@ import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.config.AuthUiConfig;
 import com.lionapps.wili.avacity.models.User;
 import com.lionapps.wili.avacity.viewmodel.LoginViewModel;
+import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,7 +58,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         StatusBarUtil.setTranslucent(this,50);
         ButterKnife.bind(this);
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        ViewModelFactory factory = new ViewModelFactory();
+        viewModel = ViewModelProviders.of(this,factory).get(LoginViewModel.class);
         setLoginWithGoogleButton();
 
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {
