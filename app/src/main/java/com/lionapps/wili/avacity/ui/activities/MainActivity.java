@@ -162,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Marker currMarker;
                     currMarker = map.addMarker(MapUtils.createMarkerFromPlace(currPlace));
                     currMarker.setTag(currPlace.getPlaceId());
-                    //viewModel.addMarkerToList(currMarker);
                 }
             }
         });

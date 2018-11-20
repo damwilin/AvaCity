@@ -27,21 +27,10 @@ public class MainViewModel extends ViewModel {
     private String userId;
     private Bitmap currPlacePhoto;
     private String markerTag;
-    private Map<String, Marker> markerMap;
 
     public MainViewModel(Repository repository) {
         this.repository = repository;
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        markerMap = new HashMap<>();
-    }
-
-    public Map<String, Marker> getMarkerMap() {
-        return markerMap;
-    }
-
-    public void addMarkerToMap(String placeId, Marker marker) {
-        if (!markerMap.containsKey(placeId))
-            markerMap.put(placeId,marker);
     }
 
     public String getMarkerTag() {
