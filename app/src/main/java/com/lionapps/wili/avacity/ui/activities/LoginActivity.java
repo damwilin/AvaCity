@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         StatusBarUtil.setTranslucent(this,50);
         ButterKnife.bind(this);
         ViewModelFactory factory = new ViewModelFactory();
-        viewModel = ViewModelProviders.of(this,factory).get(LoginViewModel.class);
+        viewModel = ViewModelProviders.of(this, factory).get(LoginViewModel.class);
         setLoginWithGoogleButton();
 
         FirebaseAuth.getInstance().addAuthStateListener(new FirebaseAuth.AuthStateListener() {

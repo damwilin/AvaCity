@@ -3,6 +3,7 @@ package com.lionapps.wili.avacity.repository;
 import android.graphics.Bitmap;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
 import com.lionapps.wili.avacity.models.Place;
@@ -18,4 +19,6 @@ public interface Repository {
     void addPlaceCountToUser(String userId);
 
     Task getPlacePhotoUri(String placeId);
+
+    FirebaseUser getCurrUser();
 }

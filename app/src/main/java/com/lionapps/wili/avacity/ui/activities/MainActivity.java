@@ -1,6 +1,8 @@
 package com.lionapps.wili.avacity.ui.activities;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -18,7 +20,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
-import com.lionapps.wili.avacity.ui.fragments.MapFragment;
 import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
 import com.lionapps.wili.avacity.utils.MapUtils;
 import com.lionapps.wili.avacity.models.Place;
@@ -43,17 +44,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements AddPlaceFragment.OnUploadClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener {
     private FragmentManager fragmentManager;
     private AccountFragment accountFragment;
     private AddPlaceFragment addPlaceFragment;
-    private MapFragment mapFragment;
+    private SupportMapFragment mapFragment;
     private PlaceDetailsFragment placeDetailsFragment;
 
 
     public MainViewModel viewModel;
+    private Repository repository;
+    private GoogleMap map;
 
-
+    private final static int REQUEST_LOCATION_PERMISSION = 1001;
 
 
     @BindView(R.id.coordinator)
@@ -68,20 +71,27 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         StatusBarUtil.setTranslucent(this,50);
-        ButterKnife.bind(this);;
+        ButterKnife.bind(this);
+        setupBottomNavigationView();
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         initializeFragments();
         displayAccountFragment();
-        displayMapFragment();
-        setupBottomNavigationView();
+        displayMap();
+    }
+
+
+    private void startUserDetailsActivity(){
+        Intent userDetailsActivityIntent = new Intent(this, UserDetailsActivity.class);
+        startActivity(userDetailsActivityIntent);
     }
     private void initializeFragments() {
         accountFragment = new AccountFragment();
         addPlaceFragment = new AddPlaceFragment();
         placeDetailsFragment = new PlaceDetailsFragment();
         fragmentManager = getSupportFragmentManager();
-        mapFragment = new MapFragment();
+        mapFragment = (SupportMapFragment)fragmentManager
+                .findFragmentById(R.id.map);
     }
 
     private void displayAccountFragment() {
@@ -97,15 +107,34 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
                 .commit();
     }
 
-    private void displayMapFragment(){
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_container, mapFragment)
-                .commit();
+    private void displayMap() {
+        mapFragment.getMapAsync(this);
     }
 
+    private void setOnMarkerClickListener(){
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                String tag = marker.getTag().toString();
+                viewModel.setMarkerTag(tag);
+                displayPlaceDetailsFragment();
+                expandSlidingPanel();
+                return true;
+            }
+        });
+    }
 
-
-
+    private void setOnMapLongClickListener(){
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                viewModel.setClickedLatLng(latLng);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                displayAddPlaceFragment();
+                expandSlidingPanel();
+            }
+        });
+    }
 
     private void displayAddPlaceFragment(){
         fragmentManager.getFragments().clear();
@@ -115,6 +144,36 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
         addPlaceFragment.setmCallback(this);
     }
 
+    private void setLocationEnabled() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
+            EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
+        } else {
+            map.setMyLocationEnabled(true);
+            Snackbar.make(this.findViewById(R.id.coordinator), "Location enabled", Snackbar.LENGTH_LONG).show();
+        }
+    }
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        setLocationEnabled();
+        displayMarkers();
+        setOnMapLongClickListener();
+        setOnMarkerClickListener();
+    }
+
+    private void displayMarkers(){
+        viewModel.getPlacesListLiveData().observe(this, new Observer<List<Place>>() {
+            @Override
+            public void onChanged(List<Place> places) {
+                for (Place currPlace : places){
+                    Marker currMarker;
+                    currMarker = map.addMarker(MapUtils.createMarkerFromPlace(currPlace));
+                    currMarker.setTag(currPlace.getPlaceId());
+                }
+            }
+        });
+    }
 
     private void expandSlidingPanel(){
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
@@ -127,9 +186,9 @@ public class MainActivity extends AppCompatActivity implements AddPlaceFragment.
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.map_view:
-                        //TODO switch mapFragment
+                        //Curent Activity
                     case R.id.account_view:
-                        //TODO switch accountDetailsView
+                        startUserDetailsActivity();
                 }
                 return true;
             }

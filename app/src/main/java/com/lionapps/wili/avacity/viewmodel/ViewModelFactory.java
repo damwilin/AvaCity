@@ -21,11 +21,10 @@ public class ViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(MainViewModel.class))
             return (T) new  MainViewModel(repository);
-        else if (modelClass.isAssignableFrom(LoginViewModel.class)){
+        else if (modelClass.isAssignableFrom(LoginViewModel.class))
             return (T) new LoginViewModel(repository);
-        }
-        else if (modelClass.isAssignableFrom(MapViewModel.class))
-            return (T) new MapViewModel(repository);
+        else if (modelClass.isAssignableFrom(UserDetailsViewModel.class))
+            return (T) new UserDetailsViewModel(repository);
             throw new IllegalArgumentException("ViewModel Not Found");
     }
 }
