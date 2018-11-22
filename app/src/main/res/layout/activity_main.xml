@@ -30,10 +30,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="80dp" />
 
-                <FrameLayout
-                    android:id="@+id/main_container"
+                <fragment
+                    android:id="@+id/map_fragment"
+                    class="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"/>
             </LinearLayout>
 
             <com.google.android.material.bottomnavigation.BottomNavigationView

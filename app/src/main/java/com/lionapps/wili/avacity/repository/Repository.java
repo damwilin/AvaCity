@@ -14,11 +14,10 @@ public interface Repository {
     void insertUser(User user);
 
     PlaceListLiveData getPlacesLiveData();
+    PlaceListLiveData getUserPlacesLiveData();
     void insertPlace(Place place, Bitmap bitmap);
 
-    void addPlaceCountToUser(String userId);
-
-    Task getPlacePhotoUri(String placeId);
-
     FirebaseUser getCurrUser();
+
+    void addPlaceToUser(String userId, String placeId);
 }

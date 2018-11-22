@@ -70,17 +70,12 @@ public class PlaceDetailsFragment extends Fragment {
                 }
                 if (currPlace != null) {
                     placeTitle.setText(currPlace.getTitle());
-                    viewModel.getPlacePhotoUri(currPlace.getPlaceId()).addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Log.w("PlaceDetails", uri.toString());
+                    if (currPlace.getPhotoUrl() != null)
                             Picasso.get()
-                                    .load(uri)
+                                    .load(currPlace.getPhotoUrl())
                                     .into(placeImageView);
-                        }
-                    });
-                    //upVoteTextView.setText(currPlace.getUpVote());
-                    //downVoteTextView.setText(currPlace.getDownVote());
+                    upVoteTextView.setText(currPlace.getUpVote());
+                    downVoteTextView.setText(currPlace.getDownVote());
                 }
             }
         });

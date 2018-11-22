@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
@@ -37,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -48,12 +50,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FragmentManager fragmentManager;
     private AccountFragment accountFragment;
     private AddPlaceFragment addPlaceFragment;
-    private SupportMapFragment mapFragment;
     private PlaceDetailsFragment placeDetailsFragment;
 
 
     public MainViewModel viewModel;
-    private Repository repository;
     private GoogleMap map;
 
     private final static int REQUEST_LOCATION_PERMISSION = 1001;
@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @BindView(R.id.bottom_navigation_menu)
     BottomNavigationView bottomNavigationView;
 
+    private SupportMapFragment mapFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         initializeFragments();
         displayAccountFragment();
-        displayMap();
     }
 
 
@@ -86,12 +87,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startActivity(userDetailsActivityIntent);
     }
     private void initializeFragments() {
-        accountFragment = new AccountFragment();
-        addPlaceFragment = new AddPlaceFragment();
-        placeDetailsFragment = new PlaceDetailsFragment();
         fragmentManager = getSupportFragmentManager();
-        mapFragment = (SupportMapFragment)fragmentManager
-                .findFragmentById(R.id.map);
+        accountFragment = new AccountFragment();
+        mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        mapFragment.getMapAsync(this);
     }
 
     private void displayAccountFragment() {
@@ -101,14 +100,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void displayPlaceDetailsFragment(){
-        fragmentManager.getFragments().clear();
+        placeDetailsFragment = new PlaceDetailsFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.sliding_panel_container, placeDetailsFragment)
                 .commit();
-    }
-
-    private void displayMap() {
-        mapFragment.getMapAsync(this);
     }
 
     private void setOnMarkerClickListener(){
@@ -137,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void displayAddPlaceFragment(){
-        fragmentManager.getFragments().clear();
+        addPlaceFragment = new AddPlaceFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.sliding_panel_container, addPlaceFragment)
                 .commit();

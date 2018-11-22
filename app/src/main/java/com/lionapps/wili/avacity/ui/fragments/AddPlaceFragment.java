@@ -28,7 +28,7 @@ import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.suke.widget.SwitchButton;
 
 
-public class AddPlaceFragment extends Fragment{
+public class AddPlaceFragment extends Fragment {
 
     private MainViewModel viewModel;
 
@@ -54,7 +54,7 @@ public class AddPlaceFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 insertPlace();
-                Snackbar.make(getActivity().findViewById(R.id.coordinator),"Place inserted", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(getActivity().findViewById(R.id.coordinator), "Place inserted", Snackbar.LENGTH_LONG).show();
                 mCallback.onUploadClick();
             }
         });
@@ -74,30 +74,32 @@ public class AddPlaceFragment extends Fragment{
         setUploadImageView();
     }
 
-    private void insertPlace(){
+    private void insertPlace() {
         LatLng latLng = viewModel.getClickedLatLng();
         Place place = new Place();
         place.setTitle(titleEditText.getText().toString());
-        place.setPlaceId(Utils.createPlaceId(latLng,viewModel.getUserId()));
+        place.setPlaceId(Utils.createPlaceId(latLng, viewModel.getUserId()));
         place.setLat(latLng.latitude);
         place.setLng(latLng.longitude);
         place.setGood(!switchButton.isChecked());
         place.setFinderId(viewModel.getUserId());
+        place.setUpVote(0);
+        place.setDownVote(0);
         viewModel.insertPlace(place);
-        viewModel.addPlaceCountToUser();
+        viewModel.addPlaceToUser(place.getPlaceId());
     }
 
     public void setmCallback(OnUploadClickListener mCallback) {
         this.mCallback = mCallback;
     }
 
-    public interface OnUploadClickListener{
+    public interface OnUploadClickListener {
         public void onUploadClick();
     }
 
-    private void dispatchTakePictureIntent(){
+    private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null){
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
@@ -105,7 +107,7 @@ public class AddPlaceFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK){
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             viewModel.setCurrPlacePhoto(imageBitmap);
@@ -114,14 +116,13 @@ public class AddPlaceFragment extends Fragment{
 
     }
 
-    private void setUploadImageView(){
+    private void setUploadImageView() {
         Bitmap image = viewModel.getCurrPlacePhoto();
-        if (image != null){
+        if (image != null) {
             uploadImageView.setImageBitmap(image);
             uploadImageView.setCropToPadding(true);
         }
     }
-
 
 
 }

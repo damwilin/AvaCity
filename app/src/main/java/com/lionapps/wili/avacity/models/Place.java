@@ -11,11 +11,12 @@ public class Place implements Comparator<Place>, Comparable<Place> {
     private int downVote;
     private String finderId;
     private String placeId;
+    private String photoUrl;
 
     public Place() {
     }
 
-    public Place(String title, String placeId, double lat, double lng, boolean good, int upVote, int downVote, String finderId) {
+    public Place(String title, String placeId, double lat, double lng, boolean good, int upVote, int downVote, String finderId, String photoUrl) {
         this.title = title;
         this.placeId = placeId;
         this.lat = lat;
@@ -24,6 +25,7 @@ public class Place implements Comparator<Place>, Comparable<Place> {
         this.upVote = upVote;
         this.downVote = downVote;
         this.finderId = finderId;
+        this.photoUrl = photoUrl;
     }
 
     public Place(String placeId) {
@@ -94,6 +96,13 @@ public class Place implements Comparator<Place>, Comparable<Place> {
         this.finderId = finderId;
     }
 
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
 
     @Override
     public int compare(Place o1, Place o2) {

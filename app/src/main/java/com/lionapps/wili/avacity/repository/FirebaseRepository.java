@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
@@ -52,26 +53,23 @@ public class FirebaseRepository implements Repository {
     }
 
     @Override
+    public PlaceListLiveData getUserPlacesLiveData() {
+        Query query = FirebaseUtils.getUserPlacesReference(firestore,getCurrUser().getUid());
+        return new PlaceListLiveData(query);
+    }
+
+    @Override
     public void insertPlace(Place place, Bitmap bitmap) {
-        FirebaseUtils.insertPlace(firestore, place);
-        if (bitmap != null) {
-            FirebaseUtils.insertPhoto(storage, bitmap, place.getPlaceId());
-        }
+            FirebaseUtils.insertPhoto(storage, bitmap, place);
     }
 
     @Override
-    public void addPlaceCountToUser(String userId) {
-        FirebaseUtils.addPlaceCountToUser(firestore, userId);
-    }
-
-    @Override
-    public Task getPlacePhotoUri(String placeId) {
-        return FirebaseUtils.getPlacePhotoTask(storage, placeId);
+    public void addPlaceToUser(String userId, String placeId) {
+        FirebaseUtils.addPlaceToUser(firestore, userId, placeId);
     }
 
     @Override
     public FirebaseUser getCurrUser() {
         return auth.getCurrentUser();
     }
-
 }

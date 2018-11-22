@@ -6,14 +6,17 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -21,6 +24,7 @@ import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -30,6 +34,7 @@ public class FirebaseUtils {
     private static final String USERS = "USERS";
     private static final String PLACES = "PLACES";
     private static final String IMAGES = "IMAGES";
+    private static final String FINDER = "finderId";
 
 
     public static CollectionReference getUsersReference(FirebaseFirestore firestore){
@@ -42,6 +47,10 @@ public class FirebaseUtils {
 
     public static CollectionReference getPlacesReference(FirebaseFirestore firestore){
         return firestore.collection(PLACES);
+    }
+
+    public static Query getUserPlacesReference(FirebaseFirestore firestore, String userId){
+        return firestore.collection(PLACES).whereEqualTo(FINDER, userId);
     }
 
     public static DocumentReference getPlaceReference(FirebaseFirestore firestore, String placeId){
@@ -71,23 +80,29 @@ public class FirebaseUtils {
 
     }
 
-    public static void addPlaceCountToUser(FirebaseFirestore firestore, String userId){
+    public static void addPlaceToUser(FirebaseFirestore firestore, String userId, final String placeId){
         final DocumentReference ref = FirebaseUtils.getUserReference(firestore, userId);
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 User user = task.getResult().toObject(User.class);
-                user.setCountOfPlace(user.getCountOfPlace()+1);
+                List<String> userPlaces = user.getPlaces();
+                userPlaces.add(placeId);
+                user.setPlaces(userPlaces);
+                user.setCountOfPlace(userPlaces.size());
                 ref.set(user);
             }
         });
     }
 
-    public static boolean insertPhoto(FirebaseStorage storage, Bitmap bitmap, String placeId){
-        final boolean[] isSuccess = new boolean[1];
-        isSuccess[0] = false;
-        StorageReference ref = storage.getReference().child(IMAGES);
-        StorageReference placeRef = ref.child(placeId);
+    public static void addPlaceIdToUser(FirebaseFirestore firestore, String userId, String placeId){
+        DocumentReference ref = FirebaseUtils.getUserReference(firestore,userId);
+        ref.update("places",FieldValue.arrayUnion(placeId));
+    }
+
+    public static void insertPhoto(FirebaseStorage storage, Bitmap bitmap, Place place){
+        final StorageReference ref = storage.getReference().child(IMAGES);
+        final StorageReference placeRef = ref.child(place.getPlaceId());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
@@ -97,11 +112,11 @@ public class FirebaseUtils {
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                isSuccess[0]=true;
+                placeRef.getDownloadUrl();
             }
         });
-        return isSuccess[0];
     }
+
 
     public static User getUser(){
         return null;

@@ -24,13 +24,11 @@ public class MainViewModel extends ViewModel {
 
     private Repository repository;
     private LatLng clickedLatLng;
-    private String userId;
     private Bitmap currPlacePhoto;
     private String markerTag;
 
     public MainViewModel(Repository repository) {
         this.repository = repository;
-        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     public String getMarkerTag() {
@@ -42,11 +40,11 @@ public class MainViewModel extends ViewModel {
     }
 
     public String getUserId() {
-        return userId;
+        return repository.getCurrUser().getUid();
     }
 
     public LiveData getCurrUserLiveData(){
-        return repository.getUserLiveData(userId);
+        return repository.getUserLiveData(getUserId());
     }
 
     public LiveData getUserLiveData(String userId) {
@@ -69,8 +67,8 @@ public class MainViewModel extends ViewModel {
         this.clickedLatLng = clickedLatLng;
     }
 
-    public void addPlaceCountToUser(){
-        repository.addPlaceCountToUser(getUserId());
+    public void addPlaceToUser(String placeId){
+        repository.addPlaceToUser(getUserId(),placeId);
     }
 
     public Bitmap getCurrPlacePhoto() {
@@ -79,9 +77,5 @@ public class MainViewModel extends ViewModel {
 
     public void setCurrPlacePhoto(Bitmap currPlacePhoto) {
         this.currPlacePhoto = currPlacePhoto;
-    }
-
-    public Task getPlacePhotoUri(String placeId){
-        return repository.getPlacePhotoUri(placeId);
     }
 }

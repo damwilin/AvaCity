@@ -3,6 +3,7 @@ package com.lionapps.wili.avacity.viewmodel;
 import com.google.firebase.auth.FirebaseUser;
 import com.lionapps.wili.avacity.repository.Repository;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 public class UserDetailsViewModel extends ViewModel {
@@ -14,5 +15,9 @@ public class UserDetailsViewModel extends ViewModel {
 
     public FirebaseUser getUser(){
         return repository.getCurrUser();
+    }
+
+    public LiveData getUserPlacesListLiveData(){
+        return repository.getUserPlacesLiveData();
     }
 }

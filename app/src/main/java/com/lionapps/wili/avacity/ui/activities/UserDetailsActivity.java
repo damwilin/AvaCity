@@ -2,9 +2,8 @@ package com.lionapps.wili.avacity.ui.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -13,24 +12,27 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.firebase.auth.FirebaseAuth;
 import com.lionapps.wili.avacity.R;
+import com.lionapps.wili.avacity.adapter.PlacesAdapter;
+import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.viewmodel.UserDetailsViewModel;
 import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
+
+import java.util.List;
 
 public class UserDetailsActivity extends AppCompatActivity {
     private UserDetailsViewModel viewModel;
 
     @BindView(R.id.logout_button)
     MaterialButton logoutButton;
-    @BindView(R.id.user_place_list)
-    RecyclerView userPlaceList;
+    @BindView(R.id.user_list_view)
+    ListView userListView;
     @BindView(R.id.bottom_navigation_menu)
     BottomNavigationView bottomNavigationView;
 
@@ -40,9 +42,21 @@ public class UserDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_details);
         ButterKnife.bind(this);
         setupBottomNavigationView();
+        setupLogoutButton();
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(UserDetailsViewModel.class);
-        setupLogoutButton();
+        setupListView();
+    }
+
+
+    private void setupListView(){
+        viewModel.getUserPlacesListLiveData().observe(this, new Observer<List<Place>>() {
+            @Override
+            public void onChanged(List<Place> places) {
+                PlacesAdapter adapter = new PlacesAdapter(getBaseContext(),0, places);
+                userListView.setAdapter(adapter);
+            }
+        });
     }
 
     private void setupLogoutButton() {
@@ -79,6 +93,7 @@ public class UserDetailsActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigationView() {
+        bottomNavigationView.setSelectedItemId(R.id.account_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
