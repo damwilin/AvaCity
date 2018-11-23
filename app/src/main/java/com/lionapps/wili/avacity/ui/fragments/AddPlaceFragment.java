@@ -86,7 +86,7 @@ public class AddPlaceFragment extends Fragment {
         place.setUpVote(0);
         place.setDownVote(0);
         viewModel.insertPlace(place);
-        viewModel.addPlaceToUser(place.getPlaceId());
+        //TODO Add onSuccess if tru -> Snackbar Place Inserted, else Failed
     }
 
     public void setmCallback(OnUploadClickListener mCallback) {

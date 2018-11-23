@@ -43,20 +43,12 @@ public class MainViewModel extends ViewModel {
         return repository.getCurrUser().getUid();
     }
 
-    public LiveData getCurrUserLiveData(){
-        return repository.getUserLiveData(getUserId());
-    }
-
-    public LiveData getUserLiveData(String userId) {
-        return repository.getUserLiveData(userId);
-    }
-
     public LiveData getPlacesListLiveData(){
         return repository.getPlacesLiveData();
     }
 
     public void insertPlace(Place place){
-        repository.insertPlace(place, currPlacePhoto);
+        repository.insertPlace(place);
     }
 
     public LatLng getClickedLatLng() {

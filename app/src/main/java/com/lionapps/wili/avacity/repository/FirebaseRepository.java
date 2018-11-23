@@ -1,8 +1,5 @@
 package com.lionapps.wili.avacity.repository;
 
-import android.graphics.Bitmap;
-
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,8 +33,8 @@ public class FirebaseRepository implements Repository {
     }
 
     @Override
-    public UserLiveData getUserLiveData(String userId) {
-        DocumentReference ref = FirebaseUtils.getUserReference(firestore, userId);
+    public UserLiveData getUserLiveData() {
+        DocumentReference ref = FirebaseUtils.getUserReference(firestore, getCurrUser().getUid());
         return new UserLiveData(ref);
     }
 
@@ -59,8 +56,8 @@ public class FirebaseRepository implements Repository {
     }
 
     @Override
-    public void insertPlace(Place place, Bitmap bitmap) {
-            FirebaseUtils.insertPhoto(storage, bitmap, place);
+    public void insertPlace(Place place) {
+            FirebaseUtils.insertPlace(firestore,place);
     }
 
     @Override
@@ -71,5 +68,10 @@ public class FirebaseRepository implements Repository {
     @Override
     public FirebaseUser getCurrUser() {
         return auth.getCurrentUser();
+    }
+
+    @Override
+    public Task deletePlace(String placeId) {
+        return FirebaseUtils.getPlaceReference(firestore,placeId).delete();
     }
 }

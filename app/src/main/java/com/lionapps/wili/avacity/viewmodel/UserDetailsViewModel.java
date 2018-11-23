@@ -1,5 +1,6 @@
 package com.lionapps.wili.avacity.viewmodel;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.lionapps.wili.avacity.repository.Repository;
 
@@ -19,5 +20,12 @@ public class UserDetailsViewModel extends ViewModel {
 
     public LiveData getUserPlacesListLiveData(){
         return repository.getUserPlacesLiveData();
+    }
+
+    public Task deletePlace(String placeId){
+        return repository.deletePlace(placeId);
+    }
+    public LiveData getUserLiveData(){
+        return repository.getUserLiveData();
     }
 }

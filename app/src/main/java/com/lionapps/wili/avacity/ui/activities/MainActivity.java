@@ -1,7 +1,6 @@
 package com.lionapps.wili.avacity.ui.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -9,36 +8,29 @@ import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.material.bottomnavigation.BottomNavigationMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
 import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
+import com.lionapps.wili.avacity.ui.fragments.UserFragment;
 import com.lionapps.wili.avacity.utils.MapUtils;
 import com.lionapps.wili.avacity.models.Place;
-import com.lionapps.wili.avacity.repository.FirebaseRepository;
-import com.lionapps.wili.avacity.repository.Repository;
-import com.lionapps.wili.avacity.ui.fragments.AccountFragment;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -48,7 +40,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener {
     private FragmentManager fragmentManager;
-    private AccountFragment accountFragment;
     private AddPlaceFragment addPlaceFragment;
     private PlaceDetailsFragment placeDetailsFragment;
 
@@ -78,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         initializeFragments();
-        displayAccountFragment();
     }
 
 
@@ -88,15 +78,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     private void initializeFragments() {
         fragmentManager = getSupportFragmentManager();
-        accountFragment = new AccountFragment();
         mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
-    }
-
-    private void displayAccountFragment() {
-        fragmentManager.beginTransaction()
-                .add(R.id.account_container, accountFragment)
-                .commit();
     }
 
     private void displayPlaceDetailsFragment(){
@@ -194,5 +177,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onUploadClick() {
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mapFragment!=null)
+            mapFragment.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mapFragment!=null)
+            mapFragment.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mapFragment!=null)
+            mapFragment.onStart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mapFragment!=null)
+            mapFragment.onDestroy();
     }
 }

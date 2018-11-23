@@ -5,16 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activities.UserDetailsActivity">
-<LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 
-</LinearLayout>
-    <ListView
-        android:id="@+id/user_list_view"
+    <FrameLayout
+        android:id="@+id/user_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="80dp"
+        android:layout_alignParentTop="true"
+        tools:background="@color/grey" />
+
+        <ListView
+            android:id="@+id/user_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/bottom_navigation_menu"
+            android:layout_below="@+id/user_container" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/logout_button"
@@ -30,9 +34,9 @@
         android:id="@+id/bottom_navigation_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
         app:elevation="2dp"
         app:itemIconSize="32dp"
-        android:background="@android:color/white"
-        app:menu="@menu/navigation_items"
-        android:layout_alignParentBottom="true"/>
+        app:menu="@menu/navigation_items" />
 </RelativeLayout>

@@ -15,18 +15,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.models.User;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
+import com.lionapps.wili.avacity.viewmodel.UserDetailsViewModel;
 import com.squareup.picasso.Picasso;
 
-public class AccountFragment extends Fragment {
+public class UserFragment extends Fragment {
 
-    private MainViewModel viewModel;
+    private UserDetailsViewModel viewModel;
 
     @BindView(R.id.account_image_view)
     CircleImageView accountImageView;
@@ -40,7 +40,7 @@ public class AccountFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.account_fragment, container, false);
+        View view = inflater.inflate(R.layout.user_fragment, container, false);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -48,9 +48,9 @@ public class AccountFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(UserDetailsViewModel.class);
         // TODO: Use the ViewModel
-        viewModel.getUserLiveData(FirebaseAuth.getInstance().getCurrentUser().getUid()).observe(this, new Observer<User>() {
+        viewModel.getUserLiveData().observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {
                 accountNameTextView.setText(user.getName());
