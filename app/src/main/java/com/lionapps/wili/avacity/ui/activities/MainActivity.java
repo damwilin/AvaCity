@@ -3,6 +3,7 @@ package com.lionapps.wili.avacity.ui.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -18,7 +19,7 @@ import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
 import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
-import com.lionapps.wili.avacity.ui.fragments.UserFragment;
+import com.lionapps.wili.avacity.utils.LocationUtils;
 import com.lionapps.wili.avacity.utils.MapUtils;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
@@ -38,10 +39,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener, LocationUtils.mLocationListener {
     private FragmentManager fragmentManager;
     private AddPlaceFragment addPlaceFragment;
     private PlaceDetailsFragment placeDetailsFragment;
+    private LocationUtils locationUtils;
 
 
     public MainViewModel viewModel;
@@ -68,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setupBottomNavigationView();
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
+        locationUtils = new LocationUtils(this,this);
+        locationUtils.listenLocationGPS();
         initializeFragments();
     }
 
@@ -128,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
         } else {
             map.setMyLocationEnabled(true);
-            Snackbar.make(this.findViewById(R.id.coordinator), "Location enabled", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(this.findViewById(R.id.coordinator), "LocationUtils enabled", Snackbar.LENGTH_LONG).show();
         }
     }
     @Override
@@ -205,5 +209,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onDestroy();
         if (mapFragment!=null)
             mapFragment.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults);
+    }
+
+    @Override
+    public void onLocationChange(Location location) {
+        if (map!= null){
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15));
+        }
     }
 }
