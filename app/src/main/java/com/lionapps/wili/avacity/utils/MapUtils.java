@@ -1,5 +1,7 @@
 package com.lionapps.wili.avacity.utils;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -19,5 +21,9 @@ public class MapUtils {
                 .position(markerPosition)
                 .snippet(place.getPlaceId())
                 .icon(BitmapDescriptorFactory.defaultMarker(markerColor));
+    }
+
+    public static LatLng getLatLngFromLoctation(Location location){
+        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 }

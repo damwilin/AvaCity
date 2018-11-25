@@ -1,17 +1,23 @@
 package com.lionapps.wili.avacity.ui.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -44,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FragmentManager fragmentManager;
     private AddPlaceFragment addPlaceFragment;
     private PlaceDetailsFragment placeDetailsFragment;
-    private LocationUtils locationUtils;
 
 
     public MainViewModel viewModel;
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     BottomNavigationView bottomNavigationView;
 
     private SupportMapFragment mapFragment;
+    public static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,11 +217,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment.onDestroy();
     }
 
+    @SuppressLint("MissingPermission")
     private void setupLocation() {
+        //TODO Get only first time location, then check by map.LocationEnabled(); or Track by this code and draw point on map, then delete;
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if (EasyPermissions.hasPermissions(this, perms)) {
-            locationUtils = new LocationUtils(this,this);
-            locationUtils.listenLocationGPS();
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000 * 60, 2, new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    Log.w(TAG, "Location changed");
+                    if (map!= null){
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapUtils.getLatLngFromLoctation(location),25));
+                    }
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
         } else {
             EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
         }
