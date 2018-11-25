@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -70,9 +71,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setupBottomNavigationView();
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
-        locationUtils = new LocationUtils(this,this);
-        locationUtils.listenLocationGPS();
         initializeFragments();
+        setupLocation();
     }
 
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        setLocationEnabled();
+        //setLocationEnabled();
         displayMarkers();
         setOnMapLongClickListener();
         setOnMarkerClickListener();
@@ -211,6 +211,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment.onDestroy();
     }
 
+    private void setupLocation() {
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            locationUtils = new LocationUtils(this,this);
+            locationUtils.listenLocationGPS();
+        } else {
+            EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -220,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onLocationChange(Location location) {
         if (map!= null){
+            Log.w("LocationUtils", String.format("Moved to: %d, %d",location.getLatitude(), location.getLongitude()));
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15));
         }
     }

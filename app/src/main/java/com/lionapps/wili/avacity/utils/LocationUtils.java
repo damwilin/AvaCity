@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 public class LocationUtils {
     private mLocationListener listener;
-    private final static int REQUEST_LOCATION_PERMISSION = 9001;
     private LocationManager locationManager;
     private Context context;
     private static final int MIN_TIME = 1000 * 60 * 2;
@@ -24,7 +23,7 @@ public class LocationUtils {
 
     public void listenLocationGPS() {
         if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, 3, new LocationListener() {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTAMCE, new LocationListener() {
                 @Override
                 public void onLocationChanged(android.location.Location location) {
                     listener.onLocationChange(location);
@@ -52,14 +51,7 @@ public class LocationUtils {
         void onLocationChange(Location location);
     }
 /*
-    private void getLocation() {
-        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
-        if (EasyPermissions.hasPermissions(context, perms)) {
-            //TODO GET LOCATION
-        } else {
-            EasyPermissions.requestPermissions(activity, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
-        }
-    }
+
 
 */
 }
