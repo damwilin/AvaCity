@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
@@ -96,6 +97,16 @@ public class FirebaseRepository implements Repository {
                     result.add(snapshot.toObject(Place.class));
                 }
                 listener.successGettingSearchData(result);
+            }
+        });
+    }
+
+    @Override
+    public void getPlace(String placeId, final GetPlaceListener listener) {
+        FirebaseUtils.getPlaceReference(firestore, placeId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                listener.succcessGettingPlace(documentSnapshot.toObject(Place.class));
             }
         });
     }

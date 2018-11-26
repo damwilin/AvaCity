@@ -4,6 +4,7 @@ package com.lionapps.wili.avacity.viewmodel;
 import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.repository.Repository;
@@ -76,5 +77,9 @@ public class MainViewModel extends ViewModel {
 
     public void searchForPlace(SearchResultListener listener){
         repository.searchForPlace(listener);
+    }
+
+    public void getPlace(GetPlaceListener listener){
+        repository.getPlace(getMarkerTag(),listener);
     }
 }

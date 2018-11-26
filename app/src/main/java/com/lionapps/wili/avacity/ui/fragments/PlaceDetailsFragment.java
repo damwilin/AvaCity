@@ -1,8 +1,6 @@
 package com.lionapps.wili.avacity.ui.fragments;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,25 +8,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.Snackbar;
 import com.lionapps.wili.avacity.R;
+import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.squareup.picasso.Picasso;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PlaceDetailsFragment extends Fragment {
+public class PlaceDetailsFragment extends Fragment implements GetPlaceListener {
 
     private MainViewModel viewModel;
 
@@ -60,24 +52,19 @@ public class PlaceDetailsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         viewModel.getMarkerTag();
-        viewModel.getPlacesListLiveData().observe(this, new Observer<List<Place>>() {
-            @Override
-            public void onChanged(List<Place> places) {
-                Place currPlace = null;
-                for (Place place : places){
-                    if (place.getPlaceId() == viewModel.getMarkerTag())
-                        currPlace = place;
-                }
-                if (currPlace != null) {
-                    placeTitle.setText(currPlace.getTitle());
-                    if (currPlace.getPhotoUrl() != null)
-                            Picasso.get()
-                                    .load(currPlace.getPhotoUrl())
-                                    .into(placeImageView);
-                    upVoteTextView.setText(currPlace.getUpVote());
-                    downVoteTextView.setText(currPlace.getDownVote());
-                }
-            }
-        });
+        viewModel.getPlace(this);
+    }
+
+    @Override
+    public void succcessGettingPlace(Place place) {
+        if (place != null) {
+            placeTitle.setText(place.getTitle());
+            if (place.getPhotoUrl() != null)
+                Picasso.get()
+                        .load(place.getPhotoUrl())
+                        .into(placeImageView);
+            upVoteTextView.setText(String.valueOf(place.getUpVote()));
+            downVoteTextView.setText(String.valueOf(place.getDownVote()));
+        }
     }
 }

@@ -1,12 +1,9 @@
 package com.lionapps.wili.avacity.repository;
 
 import android.graphics.Bitmap;
-
 import android.net.Uri;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -126,5 +123,12 @@ public class FirebaseUtils {
         final Uri[] photoUri = new Uri[1];
         final StorageReference ref = storage.getReference().child(IMAGES);
         return ref.child(placeId).getDownloadUrl();
+    }
+
+    public static void upVotePlace(){
+
+    }
+    public static void downVotePlace(){
+
     }
 }

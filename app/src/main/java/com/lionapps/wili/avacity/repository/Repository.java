@@ -2,6 +2,7 @@ package com.lionapps.wili.avacity.repository;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
@@ -13,6 +14,7 @@ public interface Repository {
     void insertUser(User user);
 
     PlaceListLiveData getPlacesLiveData();
+    void getPlace(String placeId, GetPlaceListener listener);
     PlaceListLiveData getUserPlacesLiveData();
     void insertPlace(Place place);
     Task deletePlace(String placeId);
