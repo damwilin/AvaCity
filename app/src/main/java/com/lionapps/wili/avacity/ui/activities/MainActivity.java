@@ -6,18 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,7 +22,6 @@ import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
 import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
-import com.lionapps.wili.avacity.utils.LocationUtils;
 import com.lionapps.wili.avacity.utils.MapUtils;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
@@ -46,7 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener, LocationUtils.mLocationListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener{
     private FragmentManager fragmentManager;
     private AddPlaceFragment addPlaceFragment;
     private PlaceDetailsFragment placeDetailsFragment;
@@ -78,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         initializeFragments();
-        setupLocation();
     }
 
 
@@ -117,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapLongClick(LatLng latLng) {
                 viewModel.setClickedLatLng(latLng);
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
                 displayAddPlaceFragment();
                 expandSlidingPanel();
             }
@@ -138,13 +132,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
         } else {
             map.setMyLocationEnabled(true);
-            Snackbar.make(this.findViewById(R.id.coordinator), "LocationUtils enabled", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(this.findViewById(R.id.coordinator), "LocationUtils enabled", Snackbar.LENGTH_SHORT).show();
         }
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        //setLocationEnabled();
+        setLocationEnabled();
+        setupLocation();
         displayMarkers();
         setOnMapLongClickListener();
         setOnMarkerClickListener();
@@ -175,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 switch (item.getItemId()){
                     case R.id.map_view:
                         //Curent Activity
+                        break;
                     case R.id.account_view:
                         startUserDetailsActivity();
                 }
@@ -189,64 +185,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mapFragment!=null)
-            mapFragment.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mapFragment!=null)
-            mapFragment.onStop();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (mapFragment!=null)
-            mapFragment.onStart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mapFragment!=null)
-            mapFragment.onDestroy();
-    }
-
-    @SuppressLint("MissingPermission")
     private void setupLocation() {
         //TODO Get only first time location, then check by map.LocationEnabled(); or Track by this code and draw point on map, then delete;
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if (EasyPermissions.hasPermissions(this, perms)) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000 * 60, 2, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    Log.w(TAG, "Location changed");
-                    if (map!= null){
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(MapUtils.getLatLngFromLoctation(location),25));
-                    }
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            });
+            @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapUtils.getLatLngFromLoctation(location), 17));
         } else {
             EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
         }
@@ -256,13 +201,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults);
-    }
-
-    @Override
-    public void onLocationChange(Location location) {
-        if (map!= null){
-            Log.w("LocationUtils", String.format("Moved to: %d, %d",location.getLatitude(), location.getLongitude()));
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()),15));
-        }
     }
 }
