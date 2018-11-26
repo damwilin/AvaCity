@@ -5,13 +5,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.lionapps.wili.avacity.interfaces.SearchResultListener;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class FirebaseRepository implements Repository {
     private FirebaseFirestore firestore;
@@ -51,13 +61,13 @@ public class FirebaseRepository implements Repository {
 
     @Override
     public PlaceListLiveData getUserPlacesLiveData() {
-        Query query = FirebaseUtils.getUserPlacesReference(firestore,getCurrUser().getUid());
+        Query query = FirebaseUtils.getUserPlacesReference(firestore, getCurrUser().getUid());
         return new PlaceListLiveData(query);
     }
 
     @Override
     public void insertPlace(Place place) {
-            FirebaseUtils.insertPlace(firestore,place);
+        FirebaseUtils.insertPlace(firestore, place);
     }
 
     @Override
@@ -72,6 +82,21 @@ public class FirebaseRepository implements Repository {
 
     @Override
     public Task deletePlace(String placeId) {
-        return FirebaseUtils.getPlaceReference(firestore,placeId).delete();
+        return FirebaseUtils.getPlaceReference(firestore, placeId).delete();
+    }
+
+    @Override
+    public void searchForPlace(final SearchResultListener listener) {
+        FirebaseUtils.getPlacesReference(firestore).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                List<Place> result = new ArrayList<>();
+                List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
+                for (DocumentSnapshot snapshot : documentSnapshots){
+                    result.add(snapshot.toObject(Place.class));
+                }
+                listener.successGettingSearchData(result);
+            }
+        });
     }
 }

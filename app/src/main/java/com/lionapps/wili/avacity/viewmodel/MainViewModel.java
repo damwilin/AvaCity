@@ -2,20 +2,13 @@ package com.lionapps.wili.avacity.viewmodel;
 
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
+import com.lionapps.wili.avacity.interfaces.SearchResultListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.repository.Repository;
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -27,8 +20,18 @@ public class MainViewModel extends ViewModel {
     private Bitmap currPlacePhoto;
     private String markerTag;
 
+    private List<Place> searchList;
+
     public MainViewModel(Repository repository) {
         this.repository = repository;
+    }
+
+    public List<Place> getSearchList() {
+        return searchList;
+    }
+
+    public void setSearchList(List<Place> searchList) {
+        this.searchList = searchList;
     }
 
     public String getMarkerTag() {
@@ -69,5 +72,9 @@ public class MainViewModel extends ViewModel {
 
     public void setCurrPlacePhoto(Bitmap currPlacePhoto) {
         this.currPlacePhoto = currPlacePhoto;
+    }
+
+    public void searchForPlace(SearchResultListener listener){
+        repository.searchForPlace(listener);
     }
 }

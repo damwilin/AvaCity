@@ -1,13 +1,5 @@
 package com.lionapps.wili.avacity.ui.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DiffUtil;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -28,6 +20,13 @@ import com.lionapps.wili.avacity.viewmodel.UserDetailsViewModel;
 import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class UserDetailsActivity extends AppCompatActivity implements PlacesAdapter.onDeleteButtonClickListener {
     private UserDetailsViewModel viewModel;
@@ -119,6 +118,9 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.back:
+                        onBackPressed();
+                        break;
                     case R.id.map_view:
                         startMainActivity();
                     case R.id.account_view:

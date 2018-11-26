@@ -8,7 +8,10 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,10 +23,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
+import com.lionapps.wili.avacity.adapter.SearchAdapter;
+import com.lionapps.wili.avacity.interfaces.SearchResultListener;
+import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
 import com.lionapps.wili.avacity.ui.fragments.PlaceDetailsFragment;
 import com.lionapps.wili.avacity.utils.MapUtils;
-import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.lionapps.wili.avacity.viewmodel.ViewModelFactory;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -32,6 +37,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
@@ -41,14 +47,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener{
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener, SearchResultListener {
+    public static final String TAG = MainActivity.class.getSimpleName();
+
     private FragmentManager fragmentManager;
     private AddPlaceFragment addPlaceFragment;
     private PlaceDetailsFragment placeDetailsFragment;
-
+    private SupportMapFragment mapFragment;
 
     public MainViewModel viewModel;
     private GoogleMap map;
+
+    private SearchAdapter searchAdapter;
 
     private final static int REQUEST_LOCATION_PERMISSION = 1001;
 
@@ -59,41 +69,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     SlidingUpPanelLayout slidingUpPanel;
     @BindView(R.id.bottom_navigation_menu)
     BottomNavigationView bottomNavigationView;
+    @BindView(R.id.search_view)
+    SearchView searchView;
+    @BindView(R.id.search_list_view)
+    ListView searchListView;
 
-    private SupportMapFragment mapFragment;
-    public static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        StatusBarUtil.setTranslucent(this,50);
+        StatusBarUtil.setTranslucent(this, 50);
         ButterKnife.bind(this);
         setupBottomNavigationView();
         ViewModelFactory factory = new ViewModelFactory();
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         initializeFragments();
+        setupSearchView();
     }
 
 
-    private void startUserDetailsActivity(){
+    private void startUserDetailsActivity() {
         Intent userDetailsActivityIntent = new Intent(this, UserDetailsActivity.class);
         startActivity(userDetailsActivityIntent);
     }
+
     private void initializeFragments() {
         fragmentManager = getSupportFragmentManager();
         mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
     }
 
-    private void displayPlaceDetailsFragment(){
+    private void displayPlaceDetailsFragment() {
         placeDetailsFragment = new PlaceDetailsFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.sliding_panel_container, placeDetailsFragment)
                 .commit();
     }
 
-    private void setOnMarkerClickListener(){
+    private void setOnMarkerClickListener() {
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -106,19 +120,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void setOnMapLongClickListener(){
+    private void setOnMapLongClickListener() {
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
                 viewModel.setClickedLatLng(latLng);
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
                 displayAddPlaceFragment();
                 expandSlidingPanel();
             }
         });
     }
 
-    private void displayAddPlaceFragment(){
+    private void displayAddPlaceFragment() {
         addPlaceFragment = new AddPlaceFragment();
         fragmentManager.beginTransaction()
                 .replace(R.id.sliding_panel_container, addPlaceFragment)
@@ -135,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Snackbar.make(this.findViewById(R.id.coordinator), "LocationUtils enabled", Snackbar.LENGTH_SHORT).show();
         }
     }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
@@ -145,11 +160,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setOnMarkerClickListener();
     }
 
-    private void displayMarkers(){
+    private void displayMarkers() {
         viewModel.getPlacesListLiveData().observe(this, new Observer<List<Place>>() {
             @Override
             public void onChanged(List<Place> places) {
-                for (Place currPlace : places){
+                for (Place currPlace : places) {
                     Marker currMarker;
                     currMarker = map.addMarker(MapUtils.createMarkerFromPlace(currPlace));
                     currMarker.setTag(currPlace.getPlaceId());
@@ -158,18 +173,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void expandSlidingPanel(){
+    private void expandSlidingPanel() {
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
     }
 
-    private void setupBottomNavigationView(){
+    private void setupSearchView() {
+        searchAdapter = new SearchAdapter(this, 0);
+        searchListView.setAdapter(searchAdapter);
+        searchListView.setVisibility(View.GONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchListView.setVisibility(View.VISIBLE);
+                viewModel.searchForPlace(MainActivity.this);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchListView.setVisibility(View.GONE);
+                return false;
+            }
+        });
+    }
+
+    private void setupBottomNavigationView() {
+        bottomNavigationView.setSelectedItemId(R.id.map_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
+                    case R.id.back:
+                        onBackPressed();
+                        break;
                     case R.id.map_view:
-                        //Curent Activity
+                        //Current Activity
                         break;
                     case R.id.account_view:
                         startUserDetailsActivity();
@@ -179,6 +224,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if (searchListView.getVisibility() == View.VISIBLE)
+            searchListView.setVisibility(View.GONE);
+        else if (slidingUpPanel.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
+            slidingUpPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+        else
+            super.onBackPressed();
+    }
 
     @Override
     public void onUploadClick() {
@@ -186,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setupLocation() {
-        //TODO Get only first time location, then check by map.LocationEnabled(); or Track by this code and draw point on map, then delete;
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if (EasyPermissions.hasPermissions(this, perms)) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -200,6 +253,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void successGettingSearchData(List<Place> searchList) {
+        Log.w(TAG, "Searchlist size: " + searchList.size());
+        searchAdapter.addAll(searchList);
     }
 }

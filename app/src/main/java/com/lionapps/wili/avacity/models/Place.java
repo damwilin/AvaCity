@@ -1,6 +1,7 @@
 package com.lionapps.wili.avacity.models;
 
 import java.util.Comparator;
+import java.util.List;
 
 public class Place implements Comparator<Place>, Comparable<Place> {
     private String title;
@@ -12,11 +13,12 @@ public class Place implements Comparator<Place>, Comparable<Place> {
     private String finderId;
     private String placeId;
     private String photoUrl;
+    private List<String> tags;
 
     public Place() {
     }
 
-    public Place(String title, String placeId, double lat, double lng, boolean good, int upVote, int downVote, String finderId, String photoUrl) {
+    public Place(String title, String placeId, double lat, double lng, boolean good, int upVote, int downVote, String finderId,List<String>tags, String photoUrl) {
         this.title = title;
         this.placeId = placeId;
         this.lat = lat;
@@ -25,6 +27,7 @@ public class Place implements Comparator<Place>, Comparable<Place> {
         this.upVote = upVote;
         this.downVote = downVote;
         this.finderId = finderId;
+        this.tags = tags;
         this.photoUrl = photoUrl;
     }
 
@@ -102,6 +105,14 @@ public class Place implements Comparator<Place>, Comparable<Place> {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     @Override
