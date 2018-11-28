@@ -25,6 +25,10 @@ public class UserDetailsViewModel extends ViewModel {
     public Task deletePlace(String placeId){
         return repository.deletePlace(placeId);
     }
+
+    public void decreaseCountOfUserPlaces() {
+        repository.decreaseCountOfUserPlaces();
+    }
     public LiveData getUserLiveData(){
         return repository.getUserLiveData();
     }

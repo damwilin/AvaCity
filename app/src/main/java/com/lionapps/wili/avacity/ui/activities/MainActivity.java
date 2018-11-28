@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -24,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.adapter.SearchAdapter;
+import com.lionapps.wili.avacity.interfaces.OnItemClickListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.ui.fragments.AddPlaceFragment;
@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
         } else {
             map.setMyLocationEnabled(true);
+            setupLocation();
             Snackbar.make(this.findViewById(R.id.coordinator), "LocationUtils enabled", Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -154,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         setLocationEnabled();
-        setupLocation();
         displayMarkers();
         setOnMapLongClickListener();
         setOnMarkerClickListener();
@@ -179,14 +179,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setupSearchView() {
-        searchAdapter = new SearchAdapter(this, 0);
-        searchListView.setAdapter(searchAdapter);
         searchListView.setVisibility(View.GONE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchAdapter = new SearchAdapter(MainActivity.this, new OnItemClickListener() {
+                    @Override
+                    public void clicked(Place place) {
+                        closeSearchView();
+                        openPlaceDetails(place);
+                    }
+                });
+                searchListView.setAdapter(searchAdapter);
                 searchListView.setVisibility(View.VISIBLE);
-                viewModel.searchForPlace(MainActivity.this);
+                viewModel.searchForPlace(MainActivity.this, query);
                 return false;
             }
 
@@ -198,10 +204,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                searchListView.setVisibility(View.GONE);
+                closeSearchView();
                 return false;
             }
         });
+    }
+
+    private void closeSearchView() {
+        searchListView.setVisibility(View.GONE);
+    }
+
+    private void openPlaceDetails(Place place) {
+        if (map != null)
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(place.getLat(), place.getLng()), 17));
+        viewModel.setMarkerTag(place.getPlaceId());
+        displayPlaceDetailsFragment();
+        expandSlidingPanel();
+
     }
 
     private void setupBottomNavigationView() {
@@ -254,11 +273,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        setLocationEnabled();
     }
 
     @Override
     public void successGettingSearchData(List<Place> searchList) {
-        Log.w(TAG, "Searchlist size: " + searchList.size());
         searchAdapter.addAll(searchList);
     }
 }

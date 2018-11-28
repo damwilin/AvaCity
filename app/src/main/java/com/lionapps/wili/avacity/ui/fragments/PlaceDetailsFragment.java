@@ -10,12 +10,16 @@ import android.widget.TextView;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.models.Place;
+import com.lionapps.wili.avacity.models.User;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,28 +58,38 @@ public class PlaceDetailsFragment extends Fragment implements GetPlaceListener {
 
     @Override
     public void succcessGettingPlace(final Place place) {
-        boolean isPlaceLiked = viewModel.getUser().getLikedPlaces().contains(place.getPlaceId());
-        if (place != null) {
-            placeTitle.setText(place.getTitle());
-            likeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (likeButton.isChecked()) {
-                        viewModel.addLikeToPlace(place.getPlaceId(), 1);
-                        viewModel.addLikedPlaceToUser(place.getPlaceId());
-                    } else {
-                        viewModel.addLikeToPlace(place.getPlaceId(), -1);
-                        viewModel.deleteLikedPlaceFromUser(place.getPlaceId());
-                    }
+        viewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                List<String> likedPlaces = user.getLikedPlaces();
+                boolean isPlaceLiked = false;
+                if (likedPlaces != null) {
+                    isPlaceLiked = likedPlaces.contains(place.getPlaceId());
                 }
-            });
-            if (isPlaceLiked) {
-                likeButton.setChecked(true);
+                if (place != null) {
+                    placeTitle.setText(place.getTitle());
+                    likeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (likeButton.isChecked()) {
+                                viewModel.addLikeToPlace(place.getPlaceId(), 1);
+                                viewModel.addLikedPlaceToUser(place.getPlaceId());
+                            } else {
+                                viewModel.addLikeToPlace(place.getPlaceId(), -1);
+                                viewModel.deleteLikedPlaceFromUser(place.getPlaceId());
+                            }
+                        }
+                    });
+                    if (isPlaceLiked) {
+                        likeButton.setChecked(true);
+                    }
+                    if (place.getPhotoUrl() != null)
+                        Picasso.get()
+                                .load(place.getPhotoUrl())
+                                .into(placeImageView);
+                }
             }
-            if (place.getPhotoUrl() != null)
-                Picasso.get()
-                        .load(place.getPhotoUrl())
-                        .into(placeImageView);
-        }
+        });
+
     }
 }

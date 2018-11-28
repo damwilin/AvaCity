@@ -39,6 +39,8 @@ public class AddPlaceFragment extends Fragment {
     SwitchButton switchButton;
     @BindView(R.id.upload_image_view)
     ImageView uploadImageView;
+    @BindView(R.id.tags_edit_text)
+    EditText tagsEditText;
 
     OnUploadClickListener mCallback;
 
@@ -53,8 +55,6 @@ public class AddPlaceFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 insertPlace();
-                Snackbar.make(getActivity().findViewById(R.id.coordinator), "Place inserted", Snackbar.LENGTH_LONG).show();
-                mCallback.onUploadClick();
             }
         });
         uploadImageView.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +83,13 @@ public class AddPlaceFragment extends Fragment {
         place.setGood(!switchButton.isChecked());
         place.setFinderId(viewModel.getUserId());
         place.setLikeCount(0);
-        viewModel.insertPlace(place);
+        place.setTags(Utils.parseTags(tagsEditText.getText().toString()));
+        if (place.getTitle() != null && !place.getTitle().equals("")) {
+            viewModel.insertPlace(place);
+            Snackbar.make(getActivity().findViewById(R.id.coordinator), "Place inserted", Snackbar.LENGTH_LONG).show();
+            mCallback.onUploadClick();
+        } else
+            Snackbar.make(getActivity().findViewById(R.id.coordinator), "Please set title", Snackbar.LENGTH_SHORT).show();
         //TODO Add onSuccess if tru -> Snackbar Place Inserted, else Failed
     }
 

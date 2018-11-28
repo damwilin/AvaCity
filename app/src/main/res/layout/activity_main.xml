@@ -7,60 +7,68 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.MainActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        android:id="@+id/sliding_up_panel"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        app:umanoPanelHeight="0dp"
-        app:umanoShadowHeight="4dp">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <com.sothree.slidinguppanel.SlidingUpPanelLayout
+            android:id="@+id/sliding_up_panel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            app:umanoPanelHeight="0dp"
+            app:umanoShadowHeight="4dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="top"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="top"
+                    android:orientation="vertical">
 <androidx.appcompat.widget.SearchView
     android:id="@+id/search_view"
-    app:queryHint="Search for likeCount"
+    app:queryHint="Search"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>
-                <ListView
-                    android:id="@+id/search_list_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-                <fragment
-                    android:id="@+id/map_fragment"
-                    class="com.google.android.gms.maps.SupportMapFragment"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
 
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/bottom_navigation_menu"
+                    <ListView
+                        android:id="@+id/search_list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                    <fragment
+                        android:id="@+id/map_fragment"
+                        class="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:elevation="2dp"
-                app:itemIconSize="32dp"
-                android:background="@android:color/white"
-                app:menu="@menu/navigation_items"
-                android:layout_alignParentBottom="true"/>
-        </RelativeLayout>
+                android:layout_height="400dp">
 
-        <RelativeLayout
+                <FrameLayout
+                    android:id="@+id/sliding_panel_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </RelativeLayout>
+
+        </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_menu"
             android:layout_width="match_parent"
-            android:layout_height="350dp">
-
-            <FrameLayout
-                android:id="@+id/sliding_panel_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </RelativeLayout>
-
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            app:elevation="4dp"
+            app:itemIconSize="32dp"
+            app:menu="@menu/navigation_items" />
+    </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

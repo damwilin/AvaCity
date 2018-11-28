@@ -18,11 +18,11 @@ import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.PhotoInsertListener;
 import com.lionapps.wili.avacity.interfaces.PlaceInsertListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
-import com.lionapps.wili.avacity.interfaces.UserListener;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
+import com.lionapps.wili.avacity.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +76,7 @@ public class FirebaseRepository implements Repository {
         FirebaseUtils.insertPlace(firestore, place, new PlaceInsertListener() {
             @Override
             public void placeInsertSuccess() {
+                FirebaseUtils.updateUserCountOfPlace(firestore, getCurrUser().getUid(), 1);
                 if (bitmap != null) {
                     FirebaseUtils.insertPhoto(storage, bitmap, place, new PhotoInsertListener() {
                         @Override
@@ -104,23 +105,20 @@ public class FirebaseRepository implements Repository {
     }
 
     @Override
-    public void searchForPlace(final SearchResultListener listener) {
+    public void searchForPlace(final SearchResultListener listener, final String query) {
         FirebaseUtils.getPlacesReference(firestore).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 List<Place> result = new ArrayList<>();
                 List<DocumentSnapshot> documentSnapshots = queryDocumentSnapshots.getDocuments();
                 for (DocumentSnapshot snapshot : documentSnapshots) {
-                    result.add(snapshot.toObject(Place.class));
+                    Place curPlace = snapshot.toObject(Place.class);
+                    if (Utils.isPlaceContainsTags(curPlace, query))
+                        result.add(curPlace);
                 }
                 listener.successGettingSearchData(result);
             }
         });
-    }
-
-    @Override
-    public void getUser(String userId, UserListener listener) {
-        FirebaseUtils.getUser(firestore, userId, listener);
     }
 
     @Override
@@ -134,12 +132,17 @@ public class FirebaseRepository implements Repository {
     }
 
     @Override
-    public void addLikePlaceToUser(String userId, String placeId) {
-        FirebaseUtils.addLikePlaceToUser(firestore, userId, placeId);
+    public void addLikePlaceToUser(String placeId) {
+        FirebaseUtils.addLikePlaceToUser(firestore, getCurrUser().getUid(), placeId);
     }
 
     @Override
-    public void deleteLikePlaceFromUser(String userId, String placeId) {
-        FirebaseUtils.deleteLikedPlaceFromUser(firestore, userId, placeId);
+    public void deleteLikePlaceFromUser(String placeId) {
+        FirebaseUtils.deleteLikedPlaceFromUser(firestore, getCurrUser().getUid(), placeId);
+    }
+
+    @Override
+    public void decreaseCountOfUserPlaces() {
+        FirebaseUtils.updateUserCountOfPlace(firestore, getCurrUser().getUid(), -1);
     }
 }

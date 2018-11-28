@@ -1,68 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_centerHorizontal="true"
     android:layout_margin="10dp"
+    android:orientation="vertical"
     tools:context=".ui.fragments.AddPlaceFragment">
 
 
     <EditText
         android:id="@+id/title_edit_text"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Give it a title" />
-
-    <com.suke.widget.SwitchButton
-        android:id="@+id/switch_button"
-        app:sb_uncheck_color="@color/green"
-        app:sb_uncheckcircle_color="@color/green"
-        app:sb_shadow_effect="true"
-        app:sb_shadow_offset="4dp"
-        app:sb_button_color="@android:color/darker_gray"
-        app:sb_checkline_color="@color/red"
-        app:sb_shadow_radius="4dp"
-        app:sb_checked_color="@color/red"
-        android:layout_width="100dp"
-        android:layout_height="50dp" />
-
-
+        android:layout_alignParentTop="true"
+        android:hint="Give it a title" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <com.suke.widget.SwitchButton
+            android:id="@+id/switch_button"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            app:sb_button_color="@android:color/darker_gray"
+            app:sb_checked_color="@color/red"
+            app:sb_checkline_color="@color/red"
+            app:sb_shadow_effect="true"
+            app:sb_shadow_offset="4dp"
+            app:sb_shadow_radius="4dp"
+            app:sb_uncheck_color="@color/green"
+            app:sb_uncheckcircle_color="@color/green" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"
-            android:layout_centerHorizontal="true"
-            app:cardCornerRadius="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardElevation="3dp"
-            app:cardBackgroundColor="@android:color/darker_gray">
+            android:layout_below="@+id/switch_button"
+            android:layout_centerHorizontal="true"
+            app:cardBackgroundColor="@android:color/darker_gray"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
             <ImageView
                 android:id="@+id/upload_image_view"
-                android:layout_width="320dp"
-                android:layout_height="150dp"
-                android:src="@drawable/ic_photo_camera"/>
+                android:layout_width="250dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_photo_camera" />
         </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_marginTop="20dp"
+        <EditText
+            android:id="@+id/tags_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/card_view"
+            android:hint="Set tags"
+            android:textSize="14sp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/upload_button"
-            android:textAlignment="center"
-            android:text="Upload"
-            android:textColor="@android:color/white"
-            android:layout_centerHorizontal="true"
             android:layout_width="250dp"
-            app:cornerRadius="48dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/tags_edit_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:background="@color/colorAccent"
-            android:layout_height="50dp" />
+            android:text="Upload"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            app:cornerRadius="48dp" />
 
     </RelativeLayout>
 

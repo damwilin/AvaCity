@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import com.google.android.gms.maps.model.LatLng;
 import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
-import com.lionapps.wili.avacity.interfaces.UserListener;
+import com.lionapps.wili.avacity.liveData.UserLiveData;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
 import com.lionapps.wili.avacity.repository.Repository;
@@ -16,19 +16,20 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-public class MainViewModel extends ViewModel implements UserListener {
+public class MainViewModel extends ViewModel {
 
     private Repository repository;
     private LatLng clickedLatLng;
     private Bitmap currPlacePhoto;
     private String markerTag;
-    private User user;
+    private User currUser;
 
     private List<Place> searchList;
 
     public MainViewModel(Repository repository) {
         this.repository = repository;
     }
+
 
     public List<Place> getSearchList() {
         return searchList;
@@ -74,28 +75,16 @@ public class MainViewModel extends ViewModel implements UserListener {
         this.currPlacePhoto = currPlacePhoto;
     }
 
-    public void searchForPlace(SearchResultListener listener) {
-        repository.searchForPlace(listener);
+    public void searchForPlace(SearchResultListener listener, String query) {
+        repository.searchForPlace(listener, query);
     }
 
     public void getPlace(GetPlaceListener listener) {
         repository.getPlace(getMarkerTag(), listener);
     }
 
-    private void updateUser() {
-        repository.getUser(getUserId(), this);
-    }
-
-    public User getUser() {
-        updateUser();
-        return user;
-    }
-
-
-    @Override
-    public void setUser(User user) {
-        this.user = user;
-
+    public UserLiveData getUser() {
+        return repository.getUserLiveData();
     }
 
     public void addLikeToPlace(String placeId, int likeCount) {
@@ -103,12 +92,10 @@ public class MainViewModel extends ViewModel implements UserListener {
     }
 
     public void addLikedPlaceToUser(String placeId) {
-        repository.addLikePlaceToUser(user.getUserId(), placeId);
-        updateUser();
+        repository.addLikePlaceToUser(placeId);
     }
 
     public void deleteLikedPlaceFromUser(String placeId) {
-        repository.deleteLikePlaceFromUser(user.getUserId(), placeId);
-        updateUser();
+        repository.deleteLikePlaceFromUser(placeId);
     }
 }

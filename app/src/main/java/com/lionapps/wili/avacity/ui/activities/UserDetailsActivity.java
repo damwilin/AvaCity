@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.adapter.PlacesAdapter;
+import com.lionapps.wili.avacity.interfaces.OnItemClickListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.ui.fragments.UserFragment;
 import com.lionapps.wili.avacity.viewmodel.UserDetailsViewModel;
@@ -69,7 +70,12 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
             @Override
             public void onChanged(List<Place> places) {
                 if (userListView.getAdapter() == null) {
-                    adapter = new PlacesAdapter(getBaseContext(), 0, places);
+                    adapter = new PlacesAdapter(getBaseContext(), places, new OnItemClickListener() {
+                        @Override
+                        public void clicked(Place place) {
+                            //TODO Start MainActivity -> openPlaceInfo maybe request num or Place in bundle
+                        }
+                    });
                     adapter.setOnDeleteButtonClickListener(UserDetailsActivity.this);
                     userListView.setAdapter(adapter);
                 } else {
@@ -138,9 +144,10 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
         viewModel.deletePlace(place.getPlaceId()).addOnSuccessListener(new OnSuccessListener<Place>() {
             @Override
             public void onSuccess(Place place) {
-            adapter.remove(place);
-            adapter.notifyDataSetChanged();
-                }
+                viewModel.decreaseCountOfUserPlaces();
+                adapter.remove(place);
+                adapter.notifyDataSetChanged();
+            }
         });
     }
 }

@@ -18,7 +18,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.lionapps.wili.avacity.interfaces.PhotoInsertListener;
 import com.lionapps.wili.avacity.interfaces.PlaceInsertListener;
-import com.lionapps.wili.avacity.interfaces.UserListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.models.User;
 
@@ -112,17 +111,6 @@ public class FirebaseUtils {
         });
     }
 
-    public static void getUser(FirebaseFirestore firestore, String userId, final UserListener listener) {
-        final DocumentReference ref = FirebaseUtils.getUserReference(firestore, userId);
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                User user = task.getResult().toObject(User.class);
-                listener.setUser(user);
-            }
-        });
-    }
-
     public static void updateUserCountOfPlace(FirebaseFirestore firestore, String userId, final int countToAdd) {
         final DocumentReference ref = FirebaseUtils.getUserReference(firestore, userId);
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -156,17 +144,6 @@ public class FirebaseUtils {
                 });
             }
         });
-    }
-
-
-    public static User getUser() {
-        return null;
-    }
-
-    public static Task getPlacePhotoTask(FirebaseStorage storage, String placeId) {
-        final Uri[] photoUri = new Uri[1];
-        final StorageReference ref = storage.getReference().child(IMAGES);
-        return ref.child(placeId).getDownloadUrl();
     }
 
     public static void addLikeToPlace(FirebaseFirestore firestore, String placeId, final int likeCountToAdd) {
