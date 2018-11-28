@@ -12,19 +12,19 @@ public class User {
     private String photoUrl;
     private int countOfPlace;
     private int rank;
-    private List<String> places;
+    private List<String> likedPlaces;
 
     public User() {
     }
 
-    public User(String name, String userId, String emailAdress, String photoUrl, int countOfPlace, int rank, List<String> places) {
+    public User(String name, String userId, String emailAdress, String photoUrl, int countOfPlace, int rank, List<String> likedPlaces) {
         this.name = name;
         this.userId = userId;
         this.emailAdress = emailAdress;
         this.photoUrl = photoUrl;
         this.countOfPlace = countOfPlace;
         this.rank = rank;
-        this.places = places;
+        this.likedPlaces = likedPlaces;
     }
 
     public User (FirebaseUser firebaseUser) {
@@ -35,7 +35,7 @@ public class User {
             this.photoUrl = firebaseUser.getPhotoUrl().toString();
         this.countOfPlace = 0;
         this.rank = 0;
-        this.places = new ArrayList<>();
+        this.likedPlaces = new ArrayList<>();
     }
 
     public int getRank() {
@@ -86,11 +86,11 @@ public class User {
         this.emailAdress = emailAdress;
     }
 
-    public List<String> getPlaces() {
-        return places;
+    public List<String> getLikedPlaces() {
+        return likedPlaces;
     }
 
-    public void setPlaces(List<String> places) {
-        this.places = places;
+    public void setLikedPlaces(List<String> likedPlaces) {
+        this.likedPlaces = likedPlaces;
     }
 }

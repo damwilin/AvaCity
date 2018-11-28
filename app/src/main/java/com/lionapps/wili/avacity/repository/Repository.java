@@ -1,9 +1,12 @@
 package com.lionapps.wili.avacity.repository;
 
+import android.graphics.Bitmap;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
+import com.lionapps.wili.avacity.interfaces.UserListener;
 import com.lionapps.wili.avacity.liveData.PlaceListLiveData;
 import com.lionapps.wili.avacity.liveData.UserLiveData;
 import com.lionapps.wili.avacity.models.Place;
@@ -16,12 +19,19 @@ public interface Repository {
     PlaceListLiveData getPlacesLiveData();
     void getPlace(String placeId, GetPlaceListener listener);
     PlaceListLiveData getUserPlacesLiveData();
-    void insertPlace(Place place);
+
+    void insertPlace(Place place, Bitmap bitmap);
     Task deletePlace(String placeId);
+
+    void addLikeToPlace(String placeId, int countToAdd);
+
+    void addLikePlaceToUser(String userId, String placeId);
+
+    void deleteLikePlaceFromUser(String userId, String placeId);
 
     FirebaseUser getCurrUser();
 
     void searchForPlace(SearchResultListener listener);
 
-    void addPlaceToUser(String userId, String placeId);
+    void getUser(String userId, UserListener listener);
 }

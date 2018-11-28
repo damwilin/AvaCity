@@ -8,8 +8,7 @@ public class Place implements Comparator<Place>, Comparable<Place> {
     private double lat;
     private double lng;
     private boolean good;
-    private int upVote;
-    private int downVote;
+    private int likeCount;
     private String finderId;
     private String placeId;
     private String photoUrl;
@@ -18,14 +17,13 @@ public class Place implements Comparator<Place>, Comparable<Place> {
     public Place() {
     }
 
-    public Place(String title, String placeId, double lat, double lng, boolean good, int upVote, int downVote, String finderId,List<String>tags, String photoUrl) {
+    public Place(String title, String placeId, double lat, double lng, boolean good, int likeCount, String finderId, List<String> tags, String photoUrl) {
         this.title = title;
         this.placeId = placeId;
         this.lat = lat;
         this.lng = lng;
         this.good = good;
-        this.upVote = upVote;
-        this.downVote = downVote;
+        this.likeCount = likeCount;
         this.finderId = finderId;
         this.tags = tags;
         this.photoUrl = photoUrl;
@@ -75,20 +73,12 @@ public class Place implements Comparator<Place>, Comparable<Place> {
         this.good = good;
     }
 
-    public int getUpVote() {
-        return upVote;
+    public int getLikeCount() {
+        return likeCount;
     }
 
-    public void setUpVote(int upVote) {
-        this.upVote = upVote;
-    }
-
-    public int getDownVote() {
-        return downVote;
-    }
-
-    public void setDownVote(int downVote) {
-        this.downVote = downVote;
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
     }
 
     public String getFinderId() {

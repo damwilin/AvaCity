@@ -3,14 +3,6 @@ package com.lionapps.wili.avacity.ui.fragments;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +18,13 @@ import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.utils.Utils;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.suke.widget.SwitchButton;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 public class AddPlaceFragment extends Fragment {
@@ -83,8 +82,7 @@ public class AddPlaceFragment extends Fragment {
         place.setLng(latLng.longitude);
         place.setGood(!switchButton.isChecked());
         place.setFinderId(viewModel.getUserId());
-        place.setUpVote(0);
-        place.setDownVote(0);
+        place.setLikeCount(0);
         viewModel.insertPlace(place);
         //TODO Add onSuccess if tru -> Snackbar Place Inserted, else Failed
     }
@@ -94,7 +92,7 @@ public class AddPlaceFragment extends Fragment {
     }
 
     public interface OnUploadClickListener {
-        public void onUploadClick();
+        void onUploadClick();
     }
 
     private void dispatchTakePictureIntent() {

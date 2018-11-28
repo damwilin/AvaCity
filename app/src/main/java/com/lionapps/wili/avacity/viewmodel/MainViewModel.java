@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import com.google.android.gms.maps.model.LatLng;
 import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.interfaces.SearchResultListener;
+import com.lionapps.wili.avacity.interfaces.UserListener;
 import com.lionapps.wili.avacity.models.Place;
+import com.lionapps.wili.avacity.models.User;
 import com.lionapps.wili.avacity.repository.Repository;
 
 import java.util.List;
@@ -14,12 +16,13 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends ViewModel implements UserListener {
 
     private Repository repository;
     private LatLng clickedLatLng;
     private Bitmap currPlacePhoto;
     private String markerTag;
+    private User user;
 
     private List<Place> searchList;
 
@@ -47,12 +50,12 @@ public class MainViewModel extends ViewModel {
         return repository.getCurrUser().getUid();
     }
 
-    public LiveData getPlacesListLiveData(){
+    public LiveData getPlacesListLiveData() {
         return repository.getPlacesLiveData();
     }
 
-    public void insertPlace(Place place){
-        repository.insertPlace(place);
+    public void insertPlace(Place place) {
+        repository.insertPlace(place, currPlacePhoto);
     }
 
     public LatLng getClickedLatLng() {
@@ -63,10 +66,6 @@ public class MainViewModel extends ViewModel {
         this.clickedLatLng = clickedLatLng;
     }
 
-    public void addPlaceToUser(String placeId){
-        repository.addPlaceToUser(getUserId(),placeId);
-    }
-
     public Bitmap getCurrPlacePhoto() {
         return currPlacePhoto;
     }
@@ -75,11 +74,41 @@ public class MainViewModel extends ViewModel {
         this.currPlacePhoto = currPlacePhoto;
     }
 
-    public void searchForPlace(SearchResultListener listener){
+    public void searchForPlace(SearchResultListener listener) {
         repository.searchForPlace(listener);
     }
 
-    public void getPlace(GetPlaceListener listener){
-        repository.getPlace(getMarkerTag(),listener);
+    public void getPlace(GetPlaceListener listener) {
+        repository.getPlace(getMarkerTag(), listener);
+    }
+
+    private void updateUser() {
+        repository.getUser(getUserId(), this);
+    }
+
+    public User getUser() {
+        updateUser();
+        return user;
+    }
+
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
+
+    }
+
+    public void addLikeToPlace(String placeId, int likeCount) {
+        repository.addLikeToPlace(placeId, likeCount);
+    }
+
+    public void addLikedPlaceToUser(String placeId) {
+        repository.addLikePlaceToUser(user.getUserId(), placeId);
+        updateUser();
+    }
+
+    public void deleteLikedPlaceFromUser(String placeId) {
+        repository.deleteLikePlaceFromUser(user.getUserId(), placeId);
+        updateUser();
     }
 }

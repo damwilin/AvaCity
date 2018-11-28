@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +11,7 @@ import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.interfaces.GetPlaceListener;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
 import androidx.annotation.Nullable;
@@ -30,20 +30,17 @@ public class PlaceDetailsFragment extends Fragment implements GetPlaceListener {
     ImageView isGoodImageView;
     @BindView(R.id.place_title_text_view)
     TextView placeTitle;
-    @BindView(R.id.upvote_count_text_view)
-    TextView upVoteTextView;
-    @BindView(R.id.upvote_button)
-    Button upVoteButton;
-    @BindView(R.id.downvote_count_text_view)
-    TextView downVoteTextView;
-    @BindView(R.id.downvote_button)
-    Button downVoteButton;
+    @BindView(R.id.like_count)
+    TextView likeCount;
+    @BindView(R.id.like_shine_button)
+    ShineButton likeButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_place_details, container, false);
         ButterKnife.bind(this, view);
+        likeButton.init(getActivity());
         return view;
     }
 
@@ -56,15 +53,29 @@ public class PlaceDetailsFragment extends Fragment implements GetPlaceListener {
     }
 
     @Override
-    public void succcessGettingPlace(Place place) {
+    public void succcessGettingPlace(final Place place) {
+        boolean isPlaceLiked = viewModel.getUser().getLikedPlaces().contains(place.getPlaceId());
         if (place != null) {
             placeTitle.setText(place.getTitle());
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (likeButton.isChecked()) {
+                        viewModel.addLikeToPlace(place.getPlaceId(), 1);
+                        viewModel.addLikedPlaceToUser(place.getPlaceId());
+                    } else {
+                        viewModel.addLikeToPlace(place.getPlaceId(), -1);
+                        viewModel.deleteLikedPlaceFromUser(place.getPlaceId());
+                    }
+                }
+            });
+            if (isPlaceLiked) {
+                likeButton.setChecked(true);
+            }
             if (place.getPhotoUrl() != null)
                 Picasso.get()
                         .load(place.getPhotoUrl())
                         .into(placeImageView);
-            upVoteTextView.setText(String.valueOf(place.getUpVote()));
-            downVoteTextView.setText(String.valueOf(place.getDownVote()));
         }
     }
 }

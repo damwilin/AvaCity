@@ -26,7 +26,7 @@
                 android:orientation="vertical">
 <androidx.appcompat.widget.SearchView
     android:id="@+id/search_view"
-    app:queryHint="Search for places"
+    app:queryHint="Search for likeCount"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>
                 <ListView
