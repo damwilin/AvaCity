@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lionapps.wili.avacity.R;
@@ -55,6 +56,12 @@ public class PlacesAdapter extends ArrayAdapter<Place> {
         TextView title = convertView.findViewById(R.id.title_text_view);
         TextView likeCount = convertView.findViewById(R.id.like_count_text_view);
         ImageButton deleteButton = convertView.findViewById(R.id.delete_button);
+        ImageView colorImageView = convertView.findViewById(R.id.color_image_view);
+        if (place.isGood())
+            colorImageView.setBackgroundColor(getContext().getColor(R.color.green));
+        else
+            colorImageView.setBackgroundColor(getContext().getColor(R.color.red));
+
         title.setText(place.getTitle());
         likeCount.setText(String.valueOf(place.getLikeCount()));
         deleteButton.setOnClickListener(new View.OnClickListener() {

@@ -1,9 +1,10 @@
 package com.lionapps.wili.avacity.models;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
-public class Place implements Comparator<Place>, Comparable<Place> {
+public class Place implements Comparator<Place>, Comparable<Place>, Serializable {
     private String title;
     private double lat;
     private double lng;

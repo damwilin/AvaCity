@@ -86,6 +86,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewModel = ViewModelProviders.of(this, factory).get(MainViewModel.class);
         initializeFragments();
         setupSearchView();
+        openPlaceDataFromBundleIfExists();
+    }
+
+    private void openPlaceDataFromBundleIfExists() {
+        Place place = getIntentPlaceBundle();
+        if (place != null)
+            openPlaceDetails(place);
+    }
+
+
+    private Place getIntentPlaceBundle() {
+        Intent intent = getIntent();
+        if (intent.hasExtra("place")) {
+            return (Place) intent.getSerializableExtra("place");
+        }
+        return null;
     }
 
 
@@ -263,7 +279,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (EasyPermissions.hasPermissions(this, perms)) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapUtils.getLatLngFromLoctation(location), 17));
+            if (!getIntent().hasExtra("place"))
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapUtils.getLatLngFromLoctation(location), 17));
         } else {
             EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
         }

@@ -73,7 +73,7 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
                     adapter = new PlacesAdapter(getBaseContext(), places, new OnItemClickListener() {
                         @Override
                         public void clicked(Place place) {
-                            //TODO Start MainActivity -> openPlaceInfo maybe request num or Place in bundle
+                            startMainActivityWithBundle(place);
                         }
                     });
                     adapter.setOnDeleteButtonClickListener(UserDetailsActivity.this);
@@ -83,6 +83,12 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
 
             }
         });
+    }
+
+    private void startMainActivityWithBundle(Place place) {
+        Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        mainActivityIntent.putExtra("place", place);
+        startActivity(mainActivityIntent);
     }
 
     private void setupLogoutButton() {

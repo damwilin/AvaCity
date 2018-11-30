@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -17,7 +18,10 @@ import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.models.Place;
 import com.lionapps.wili.avacity.utils.Utils;
 import com.lionapps.wili.avacity.viewmodel.MainViewModel;
+import com.squareup.picasso.Picasso;
 import com.suke.widget.SwitchButton;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,10 +45,13 @@ public class AddPlaceFragment extends Fragment {
     ImageView uploadImageView;
     @BindView(R.id.tags_edit_text)
     EditText tagsEditText;
+    private static final String SWITCH_BUTTON_KEY = "SB_KEY";
 
     OnUploadClickListener mCallback;
 
     private static final int REQUEST_IMAGE_CAPTURE = 3001;
+    @BindView(R.id.delete_photo_image_button)
+    ImageButton deletePhotoButton;
 
     @Nullable
     @Override
@@ -63,7 +70,24 @@ public class AddPlaceFragment extends Fragment {
                 dispatchTakePictureIntent();
             }
         });
+        deletePhotoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePhoto();
+            }
+        });
         return view;
+    }
+
+    private void deletePhoto() {
+        if (viewModel.getCurrPlacePhoto() != null) {
+            Picasso.get()
+                    .load(R.drawable.ic_photo_camera)
+                    .into(uploadImageView);
+            viewModel.setCurrPlacePhoto(null);
+        } else {
+            Snackbar.make(getActivity().findViewById(R.id.coordinator), "There is no photo to delete", Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -83,7 +107,8 @@ public class AddPlaceFragment extends Fragment {
         place.setGood(!switchButton.isChecked());
         place.setFinderId(viewModel.getUserId());
         place.setLikeCount(0);
-        place.setTags(Utils.parseTags(tagsEditText.getText().toString()));
+        List<String> tags = Utils.parseTags(tagsEditText.getText().toString());
+        place.setTags(tags);
         if (place.getTitle() != null && !place.getTitle().equals("")) {
             viewModel.insertPlace(place);
             Snackbar.make(getActivity().findViewById(R.id.coordinator), "Place inserted", Snackbar.LENGTH_LONG).show();
@@ -128,5 +153,18 @@ public class AddPlaceFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SWITCH_BUTTON_KEY, switchButton.isChecked());
+    }
 
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            boolean switchButtonState = savedInstanceState.getBoolean(SWITCH_BUTTON_KEY);
+            switchButton.setChecked(switchButtonState);
+        }
+    }
 }
