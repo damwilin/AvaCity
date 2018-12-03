@@ -19,7 +19,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.jaeger.library.StatusBarUtil;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.adapter.SearchAdapter;
@@ -49,6 +48,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, AddPlaceFragment.OnUploadClickListener, SearchResultListener {
     public static final String TAG = MainActivity.class.getSimpleName();
+    private static final String BUNDLE_PLACE_NAME = "PLACE";
 
     private FragmentManager fragmentManager;
     private AddPlaceFragment addPlaceFragment;
@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private Place getIntentPlaceBundle() {
         Intent intent = getIntent();
-        if (intent.hasExtra("place")) {
-            return (Place) intent.getSerializableExtra("place");
+        if (intent.hasExtra(getString(R.string.bundle_place_name))) {
+            return (Place) intent.getSerializableExtra(getString(R.string.bundle_place_name));
         }
         return null;
     }
@@ -159,11 +159,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setLocationEnabled() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
-            EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
+            EasyPermissions.requestPermissions(this, getString(R.string.request_location_permission), REQUEST_LOCATION_PERMISSION, perms);
         } else {
             map.setMyLocationEnabled(true);
             setupLocation();
-            Snackbar.make(this.findViewById(R.id.coordinator), "LocationUtils enabled", Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -279,10 +278,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (EasyPermissions.hasPermissions(this, perms)) {
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (!getIntent().hasExtra("place"))
+            if (!getIntent().hasExtra(getString(R.string.bundle_place_name)))
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(MapUtils.getLatLngFromLoctation(location), 17));
         } else {
-            EasyPermissions.requestPermissions(this, "Please grant location permission", REQUEST_LOCATION_PERMISSION, perms);
+            EasyPermissions.requestPermissions(this, getString(R.string.request_location_permission), REQUEST_LOCATION_PERMISSION, perms);
         }
     }
 

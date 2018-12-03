@@ -1,26 +1,15 @@
 package com.lionapps.wili.avacity.ui.activities;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.logout_button)
     Button logoutButton;
 
-    private static final String TAG = "LoginActivity";
+    private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 9308;
 
     public LoginViewModel viewModel;
@@ -105,11 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             logoutButton.getBackground().setColorFilter(getColor(R.color.grey), PorterDuff.Mode.DARKEN);
-                            snack("Signed out");
+                            snack(getString(R.string.sign_out));
                         }
                     });
         } else {
-            snack("You are not signed in");
+            snack(getString(R.string.not_sign_in));
         }
     }
 
@@ -134,13 +123,13 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 viewModel.insertUser(new User(firebaseUser));
                 startMainActivity();
-                snack("Signed in");
+                snack(getString(R.string.sign_in));
             } else {
                 //Sign in failed
                 if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK)
-                    snack("No network connection");
+                    snack(getString(R.string.network_connection_error));
                 else
-                    snack("Error with sign in");
+                    snack(getString(R.string.sign_in_error));
             }
         }
     }

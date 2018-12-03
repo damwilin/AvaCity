@@ -1,28 +1,24 @@
 package com.lionapps.wili.avacity.ui.fragments;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.lionapps.wili.avacity.R;
 import com.lionapps.wili.avacity.models.User;
-import com.lionapps.wili.avacity.viewmodel.MainViewModel;
 import com.lionapps.wili.avacity.viewmodel.UserDetailsViewModel;
 import com.squareup.picasso.Picasso;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserFragment extends Fragment {
 
@@ -32,8 +28,6 @@ public class UserFragment extends Fragment {
     CircleImageView accountImageView;
     @BindView(R.id.account_name_text_view)
     TextView accountNameTextView;
-    @BindView(R.id.account_rank_text_view)
-    TextView accountRankTextView;
     @BindView(R.id.places_number_text_view)
     TextView placesNumberTextView;
 
@@ -54,7 +48,6 @@ public class UserFragment extends Fragment {
             @Override
             public void onChanged(User user) {
                 accountNameTextView.setText(user.getName());
-                accountRankTextView.setText(String.valueOf(user.getRank()));
                 placesNumberTextView.setText(String.valueOf(user.getCountOfPlace()));
                 Picasso.get()
                         .load(user.getPhotoUrl())

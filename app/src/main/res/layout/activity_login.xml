@@ -12,14 +12,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/app_name_text_view"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/app_logo" />
         <TextView
+            android:id="@+id/app_name_text_view"
             android:layout_above="@id/login_with_google_button"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="50dp"
             android:textSize="48dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="AvaCity"/>
+            android:text="@string/avacity" />
 
         <com.google.android.material.button.MaterialButton
             app:cornerRadius="48dp"
@@ -28,7 +36,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="LOGIN WITH Google" />
+            android:text="@string/login_with_google" />
 
         <com.google.android.material.button.MaterialButton
             app:cornerRadius="48dp"
@@ -38,7 +46,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Sign out" />
+            android:text="@string/sign_out_button" />
 
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

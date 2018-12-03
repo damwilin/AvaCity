@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name">AvaCity</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_out">Signed out</string>
+    <string name="not_sign_in">You are not signed in</string>
+    <string name="sign_in">Signed in</string>
+    <string name="network_connection_error">No network connection</string>
+    <string name="sign_in_error">Error with sign in</string>
+    <string name="login_with_google">LOGIN WITH Google</string>
+    <string name="sign_out_button">Sign out</string>
+    <string name="bundle_place_name">PLACE</string>
+    <string name="request_location_permission">Please grant location permission</string>
+    <string name="search_bar_hint">Search</string>
+    <string name="error_no_photo">There is no photo to delete</string>
+    <string name="success_insert_place">Place inserted</string>
+    <string name="error_no_title">Please set title</string>
+    <string name="bundle_bitmap">data</string>
+    <string name="title_edit_text_hint">Give it a title</string>
+    <string name="good_bad_example">Good/Bad example</string>
+    <string name="tools_place_name">Place name</string>
+    <string name="account_name">Account name</string>
+    <string name="avacity">AvaCity</string>
 </resources>

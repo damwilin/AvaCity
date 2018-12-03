@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="24sp"
-            tools:text="Place name" />
+            tools:text="@string/tools_place_name" />
 
         <ImageView
             android:id="@+id/place_image_view"

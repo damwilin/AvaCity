@@ -30,6 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class UserDetailsActivity extends AppCompatActivity implements PlacesAdapter.onDeleteButtonClickListener {
+    private static final String TAG = UserDetailsActivity.class.getSimpleName();
     private UserDetailsViewModel viewModel;
     private UserFragment userFragment;
     private PlacesAdapter adapter;
@@ -87,7 +88,7 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
 
     private void startMainActivityWithBundle(Place place) {
         Intent mainActivityIntent = new Intent(this, MainActivity.class);
-        mainActivityIntent.putExtra("place", place);
+        mainActivityIntent.putExtra(getString(R.string.bundle_place_name), place);
         startActivity(mainActivityIntent);
     }
 
@@ -146,7 +147,7 @@ public class UserDetailsActivity extends AppCompatActivity implements PlacesAdap
 
     @Override
     public void deletePlace(Place place) {
-        Log.w("UserDetailsActivity", place.getPlaceId());
+        Log.w(TAG, place.getPlaceId());
         viewModel.deletePlace(place.getPlaceId()).addOnSuccessListener(new OnSuccessListener<Place>() {
             @Override
             public void onSuccess(Place place) {

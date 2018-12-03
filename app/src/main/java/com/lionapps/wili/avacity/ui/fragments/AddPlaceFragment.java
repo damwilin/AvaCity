@@ -86,7 +86,7 @@ public class AddPlaceFragment extends Fragment {
                     .into(uploadImageView);
             viewModel.setCurrPlacePhoto(null);
         } else {
-            Snackbar.make(getActivity().findViewById(R.id.coordinator), "There is no photo to delete", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.error_no_photo), Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -111,11 +111,10 @@ public class AddPlaceFragment extends Fragment {
         place.setTags(tags);
         if (place.getTitle() != null && !place.getTitle().equals("")) {
             viewModel.insertPlace(place);
-            Snackbar.make(getActivity().findViewById(R.id.coordinator), "Place inserted", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.success_insert_place), Snackbar.LENGTH_LONG).show();
             mCallback.onUploadClick();
         } else
-            Snackbar.make(getActivity().findViewById(R.id.coordinator), "Please set title", Snackbar.LENGTH_SHORT).show();
-        //TODO Add onSuccess if tru -> Snackbar Place Inserted, else Failed
+            Snackbar.make(getActivity().findViewById(R.id.coordinator), getString(R.string.error_no_title), Snackbar.LENGTH_SHORT).show();
     }
 
     public void setmCallback(OnUploadClickListener mCallback) {
@@ -138,7 +137,7 @@ public class AddPlaceFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Bitmap imageBitmap = (Bitmap) extras.get(getString(R.string.bundle_bitmap));
             viewModel.setCurrPlacePhoto(imageBitmap);
             setUploadImageView();
         }
