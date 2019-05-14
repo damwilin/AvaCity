@@ -26,4 +26,5 @@ You also need browser and API keys in order to use Google Maps
 * [CircleImageView](https://github.com/hdodenhof/CircleImageView)
 
 
-##Screenshots
+## Screenshots
+<img src="https://raw.githubusercontent.com/damwilin/AvaCity/developer/screenshots/1.png" width="250">   <img src="https://raw.githubusercontent.com/damwilin/AvaCity/developer/screenshots/2.png" width="250">   <img src="https://raw.githubusercontent.com/damwilin/AvaCity/developer/screenshots/3.png" width="250">
